@@ -49,22 +49,24 @@ def newCatalog():
 
     catalog['caracteristicas'] = mp.newMap(20,
                                            maptype='CHAINING',
-                                           loadfactor=4.0,                                              
+                                           loadfactor=4.0,
+                                           comparefunction=compareKeys                                              
                                           )
 
     return catalog
 
 def addIntrumentalness(catalog, musica):
-    carateristicas = catalog['caracteristicas']
+    caracteristicas = catalog['caracteristicas']
     llavecaract = '\ufeff"instrumentalness"'
     existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
     if not existcaract:
         valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValues)
-        mp.put(caracteristica, llavecaract, valorarbol)
+        mp.put(caracteristicas, llavecaract, valorarbol)
 
-    entry = mp.get(caracteristica, llavecaract)
+    print(musica.keys()['dict_keys'][0])
+    entry = mp.get(caracteristicas, llavecaract)
     caracter = me.getValue(entry)
-    addTablas(catalog, caracter, musica, llavecaract)
+    #addTablas(catalog, caracter, musica, llavecaract)
 
 def addTablas(arbol, musica, caracteristica):
     llavecaract = musica[caracteristica]
@@ -73,8 +75,9 @@ def addTablas(arbol, musica, caracteristica):
         valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5, comparefunction=compareKeys)
         om.put(arbol, llavecaract, valormap)
 
-    entry = mp.get(caracteristica, llavecaract)
+    entry = mp.get(arbol, llavecaract)
     caracter = me.getValue(entry)
+    #addArtistAndTracks(arbol, caracter, musica, llavecaract)
 
 def addArtistAndTracks(tabla, musica):
     llavecaract = 'artist_id'
@@ -103,7 +106,7 @@ def addTrack(musica):
 def compareIds():
     return None
 
-def compareKeys():
+def compareKeys(musica1, musica2):
     return None
 
 def compareValues():

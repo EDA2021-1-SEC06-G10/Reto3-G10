@@ -44,7 +44,7 @@ def loadContent(catalog):
     contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for content in input_file:
-        model.addCaract(catalog, content)
+        model.addIntrumentalness(catalog, content)
 
         
 # Funciones de ordenamiento
