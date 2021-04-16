@@ -39,6 +39,19 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- ")
 
+def print_catalog(catalog, sample):
+    i = 1
+    while i <= sample:
+        content = lt.getElement(catalog, i)
+        print('artist_id: ' + content['artist_id'] + '||' + 'track_id' + content['track_id'] + '.')
+        i += 1
+
+def initCatalog():
+    return controller.initCatalog()
+
+def loadData(catalog):
+    controller.loadData(catalog)
+
 catalog = None
 
 """
@@ -49,6 +62,12 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog = initCatalog()
+        loadData = controller.loadData(catalog)
+        #print_catalog(catalog, 20)
+        #print('Artistas cargados:' + str(lt.size(catalog['valores_artistid'])))
+        #print('Tracks cargados:' + str(lt.size(catalog['valores_trackid']))
+
 
     elif int(inputs[0]) == 2:
         pass

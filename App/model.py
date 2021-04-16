@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.ADT import orderedmap as om
 import datetime
 assert cf
 
@@ -41,39 +42,55 @@ los mismos.
 # Construccion de modelos
 
 def newCatalog():
-    catalog = {'caracteristicas': None, # Tabla de Hash.
-               'valor_caract': None, # Árbol Rojo-Negro
-               'info_valor_caract': None, # Lista con la info del valor.
-                }
+    catalog = {'caracteristicas': None, # Tabla de Hash en la que las llaves son
+                                        # los nombres de las características y los
+                                        # valores son un árbol Rojo-Negro.
+               }
 
-    catalog['caracteristicas'] = mp.newMap(12,
+    catalog['caracteristicas'] = mp.newMap(20,
                                            maptype='CHAINING',
-                                           loadfactor=4.0,
-                                           comparefunction=compareCaractName                                              
+                                           loadfactor=4.0,                                              
                                           )
-
-    catalog['valor_caract'] = om.newMap(omaptype='RBT',
-                                        comparefunction=compareValue
-                                        )
-    
-    catalog['info_valor_caract'] = lt.newList('ARRAY_LIST')
 
     return catalog
 
-def addInfoValor(catalog, valor):
-    lt.addLast(catalog['info_valor_caract', valor])
+def addIntrumentalness(catalog, musica):
+    carateristicas = catalog['caracteristicas']
+    llavecaract = '\ufeff"instrumentalness"'
+    existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
+    if not existcaract:
+        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValues)
+        mp.put(caracteristica, llavecaract, valorarbol)
 
-def addCaracteristica(catalog, nombre):
-    try:
-        caract = catalog['caracteristicas']
-        caracttree = 
-    except Exception:
-        return None
+    entry = mp.get(caracteristica, llavecaract)
+    caracter = me.getValue(entry)
+    addTablas(catalog, caracter, musica, llavecaract)
 
-def newCaracteristica(caracteristica):
-    entry = {'caracteristica': None}
-    entry['caracteristica'] = # El árbol rojo-negro
-    return entry
+def addTablas(arbol, musica, caracteristica):
+    llavecaract = musica[caracteristica]
+    existcaract = om.contains(arbol, llavecaract)
+    if not existcaract:
+        valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5, comparefunction=compareKeys)
+        om.put(arbol, llavecaract, valormap)
+
+    entry = mp.get(caracteristica, llavecaract)
+    caracter = me.getValue(entry)
+
+def addArtistAndTracks(tabla, musica):
+    llavecaract = 'artist_id'
+    existcaract = mp.contains(tabla, llavecat)
+    if not existcaract:
+        lista = lt.newList('ARRAY_LIST', cmpfunction=compareIds, key=None)
+        mp.put(tabla, llavecaract, lista)
+    
+    entry = mp.get(tabla, llavecaract)
+    caracter = me.getValue(entry)
+
+def addArtist(musica):
+    lt.addLast(musica['artist_id'])
+
+def addTrack(musica):
+    lt.addLast(musica['track_id'])
 
 # Funciones para agregar informacion al catalogo
 
@@ -82,5 +99,14 @@ def newCaracteristica(caracteristica):
 # Funciones de consulta
 
 # Funciones utilizadas para comparar elementos dentro de una lista
+
+def compareIds():
+    return None
+
+def compareKeys():
+    return None
+
+def compareValues():
+    return None
 
 # Funciones de ordenamiento
