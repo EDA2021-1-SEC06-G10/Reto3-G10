@@ -62,12 +62,12 @@ def addIntrumentalness(catalog, musica):
     if not existcaract:
         valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
         mp.put(caracteristicas, llavecaract, valorarbol)
+        addTablas(valorarbol, musica, llavecaract)
 
     #entry = mp.get(caracteristicas, llavecaract)
     #caracter = me.getValue(entry)
-    addTablas(valorarbol, musica, llavecaract)
     #print(catalog['caracteristicas'])
-    print(valorarbol)
+    #print(valorarbol)
 
 def addTablas(arbol, musica, caracteristica):
     llavecaract = musica[caracteristica]
@@ -75,11 +75,11 @@ def addTablas(arbol, musica, caracteristica):
     if not existcaract:
         valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5)
         om.put(arbol, llavecaract, valormap)
+    addArtistsKey(valormap, musica)
+    addTracksKey(valormap, musica)
 
     #entry = mp.get(arbol, llavecaract)
     #caracter = me.getValue(entry)
-    addArtistsKey(valormap, musica)
-    addTracksKey(valormap, musica)
 
 def addArtistsKey(tabla, musica):
     llavecaract = 'artist_id'
@@ -87,10 +87,10 @@ def addArtistsKey(tabla, musica):
     if not existcaract:
         lista = lt.newList('ARRAY_LIST', cmpfunction=compareArtistIds)
         mp.put(tabla, llavecaract, lista)
+    addArtist(lista, musica)
     
     #entry = mp.get(tabla, llavecaract)
     #caracter = me.getValue(entry)
-    addArtist(lista, musica)
 
 def addTracksKey(tabla, musica):
     llavecaract = 'track_id'
@@ -98,13 +98,14 @@ def addTracksKey(tabla, musica):
     if not existcaract:
         lista = lt.newList('ARRAY_LIST', cmpfunction=compareTrackIds)
         mp.put(tabla, llavecaract, lista)
+    addTrack(lista, musica)
     
     #entry = mp.get(tabla, llavecaract)
     #caracter = me.getValue(entry)
-    addTrack(lista, musica)
 
 def addArtist(lista, musica):
     lt.addLast(lista, musica['artist_id'])
+    print(lista)
 
 def addTrack(lista, musica):
     lt.addLast(lista, musica['track_id'])
@@ -118,9 +119,9 @@ def addTrack(lista, musica):
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def compareArtistIds(musica1, musica2):
-    if musica1['artist_id'] > musica2['artist_id']:
+    if str(musica1['artist_id']) > str(musica2['artist_id']):
         return 1
-    elif musica1['artist_id'] < musica2['artist_id']:
+    elif str(musica1['artist_id']) < str(musica2['artist_id']):
         return -1
     else:
         return 0
