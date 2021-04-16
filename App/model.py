@@ -86,7 +86,7 @@ def addArtistsKey(tabla, musica):
     existcaract = mp.contains(tabla, llavecaract)
     if not existcaract:
         lista = lt.newList('ARRAY_LIST', cmpfunction=compareArtistIds)
-        mp.put(lista, llavecaract, lista)
+        mp.put(tabla, llavecaract, lista)
     
     #entry = mp.get(tabla, llavecaract)
     #caracter = me.getValue(entry)
