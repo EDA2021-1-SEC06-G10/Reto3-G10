@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+import datetime
 assert cf
 
 """
@@ -38,6 +39,41 @@ los mismos.
 """
 
 # Construccion de modelos
+
+def newCatalog():
+    catalog = {'caracteristicas': None, # Tabla de Hash.
+               'valor_caract': None, # Árbol Rojo-Negro
+               'info_valor_caract': None, # Lista con la info del valor.
+                }
+
+    catalog['caracteristicas'] = mp.newMap(12,
+                                           maptype='CHAINING',
+                                           loadfactor=4.0,
+                                           comparefunction=compareCaractName                                              
+                                          )
+
+    catalog['valor_caract'] = om.newMap(omaptype='RBT',
+                                        comparefunction=compareValue
+                                        )
+    
+    catalog['info_valor_caract'] = lt.newList('ARRAY_LIST')
+
+    return catalog
+
+def addInfoValor(catalog, valor):
+    lt.addLast(catalog['info_valor_caract', valor])
+
+def addCaracteristica(catalog, nombre):
+    try:
+        caract = catalog['caracteristicas']
+        caracttree = 
+    except Exception:
+        return None
+
+def newCaracteristica(caracteristica):
+    entry = {'caracteristica': None}
+    entry['caracteristica'] = # El árbol rojo-negro
+    return entry
 
 # Funciones para agregar informacion al catalogo
 
