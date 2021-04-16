@@ -60,40 +60,54 @@ def addIntrumentalness(catalog, musica):
     llavecaract = '\ufeff"instrumentalness"'
     existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
     if not existcaract:
-        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValues)
+        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
         mp.put(caracteristicas, llavecaract, valorarbol)
 
-    print(musica.keys()['dict_keys'][0])
-    entry = mp.get(caracteristicas, llavecaract)
-    caracter = me.getValue(entry)
-    #addTablas(catalog, caracter, musica, llavecaract)
+    #entry = mp.get(caracteristicas, llavecaract)
+    #caracter = me.getValue(entry)
+    addTablas(valorarbol, musica, llavecaract)
+    #print(catalog['caracteristicas'])
+    print(valorarbol)
 
 def addTablas(arbol, musica, caracteristica):
     llavecaract = musica[caracteristica]
     existcaract = om.contains(arbol, llavecaract)
     if not existcaract:
-        valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5, comparefunction=compareKeys)
+        valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5)
         om.put(arbol, llavecaract, valormap)
 
-    entry = mp.get(arbol, llavecaract)
-    caracter = me.getValue(entry)
-    #addArtistAndTracks(arbol, caracter, musica, llavecaract)
+    #entry = mp.get(arbol, llavecaract)
+    #caracter = me.getValue(entry)
+    addArtistsKey(valormap, musica)
+    addTracksKey(valormap, musica)
 
-def addArtistAndTracks(tabla, musica):
+def addArtistsKey(tabla, musica):
     llavecaract = 'artist_id'
-    existcaract = mp.contains(tabla, llavecat)
+    existcaract = mp.contains(tabla, llavecaract)
     if not existcaract:
-        lista = lt.newList('ARRAY_LIST', cmpfunction=compareIds, key=None)
+        lista = lt.newList('ARRAY_LIST', cmpfunction=compareArtistIds)
+        mp.put(lista, llavecaract, lista)
+    
+    #entry = mp.get(tabla, llavecaract)
+    #caracter = me.getValue(entry)
+    addArtist(lista, musica)
+
+def addTracksKey(tabla, musica):
+    llavecaract = 'track_id'
+    existcaract = mp.contains(tabla, llavecaract)
+    if not existcaract:
+        lista = lt.newList('ARRAY_LIST', cmpfunction=compareTrackIds)
         mp.put(tabla, llavecaract, lista)
     
-    entry = mp.get(tabla, llavecaract)
-    caracter = me.getValue(entry)
+    #entry = mp.get(tabla, llavecaract)
+    #caracter = me.getValue(entry)
+    addTrack(lista, musica)
 
-def addArtist(musica):
-    lt.addLast(musica['artist_id'])
+def addArtist(lista, musica):
+    lt.addLast(lista, musica['artist_id'])
 
-def addTrack(musica):
-    lt.addLast(musica['track_id'])
+def addTrack(lista, musica):
+    lt.addLast(lista, musica['track_id'])
 
 # Funciones para agregar informacion al catalogo
 
@@ -103,13 +117,32 @@ def addTrack(musica):
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-def compareIds():
-    return None
+def compareArtistIds(musica1, musica2):
+    if musica1['artist_id'] > musica2['artist_id']:
+        return 1
+    elif musica1['artist_id'] < musica2['artist_id']:
+        return -1
+    else:
+        return 0
+
+def compareTrackIds(musica1, musica2):
+    if musica1['track_id'] > musica2['track_id']:
+        return 1
+    elif musica1['track_id'] < musica2['track_id']:
+        return -1
+    else:
+        return 0
 
 def compareKeys(musica1, musica2):
+
     return None
 
-def compareValues():
-    return None
+def compareValuesInstrumentalness(musica1, musica2):
+    if musica1['\ufeff"instrumentalness"'] > musica2['\ufeff"instrumentalness"']:
+        return 1
+    elif musica1['\ufeff"instrumentalness"'] < musica2['\ufeff"instrumentalness"']:
+        return -1
+    else:
+        return 0
 
 # Funciones de ordenamiento

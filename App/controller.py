@@ -45,7 +45,7 @@ def loadContent(catalog):
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for content in input_file:
         model.addIntrumentalness(catalog, content)
-
+        #print(content)
         
 # Funciones de ordenamiento
 # Funciones de consulta sobre el catálogo
