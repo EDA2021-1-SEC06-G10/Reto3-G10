@@ -41,10 +41,10 @@ def loadData(catalog):
     loadContent(catalog)
 
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
+    contentfile = cf.data_dir + 'context_content_features-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
-    for content in input_file:
-        model.addThingsToTree(catalog, content)
+    for cancion in input_file:
+        model.addSong(catalog, cancion)
         #model.addIntrumentalness(catalog, content)
         #model.addTablas(catalog, content)
         #print(content)

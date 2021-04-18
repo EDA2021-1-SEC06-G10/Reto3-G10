@@ -43,10 +43,9 @@ los mismos.
 
 def newCatalog():
     catalog = {'caracteristicas': None,
-                "Avance RBT": None # Tabla de Hash en la que las llaves son
+                "Avance RBT": None, # Tabla de Hash en la que las llaves son
                                         # los nombres de las características y los
                                         # valores son un árbol Rojo-Negro.
-               'árbol rbt': None
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
@@ -55,25 +54,61 @@ def newCatalog():
                                            comparefunction=compareKeys                                              
                                           )
     
-    catalog['árbol_rbt_instrumentalness'] = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
+    catalog['Avance RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
 
     return catalog
 
 # Funciones para agregar información al catalogo
 
-def addThingsToTree(catalog, musica):
-    arbol = catalog['árbol_rbt_instrumentalness']
-    llave = musica['\ufeff"instrumentalness"']
-    entry = om.get(arbol, llave)
-    if entry is None:
-        valorEntrada = newEntryValue(llave, musica)
-        om.put(arbol, llave, valorEntrada)
-    else:
-        valorEntrada = me.getValue(entry)
-    addValueIndex(valorEntrada, musica)
-    print(om.get(arbol, '0.0'))
+def addSong(catalog, cancion):
+    addSongToTree(catalog['Avance RBT'], cancion)
+    return catalog
 
-def addValueIndex(dict, musica):
+def addSongToTree(mapt, cancion):
+    instrumentalness= cancion['instrumentalness']
+    entry = om.get(mapt, instrumentalness )
+    if entry is None:
+        dataentry =  newDataEntry(cancion)
+        om.put(mapt, instrumentalness, dataentry)
+    else:
+        dataentry = me.getValue(entry)
+    addValueIndex(dataentry, cancion)
+    return mapt
+
+def addValueIndex(dataentry, cancion):
+    cancionesInst = dataentry['instrumentalness']
+    artentry = mp.get(cancionesInst, cancion['artist_id'])
+    if (artentry is None):
+        entry = newArtEntry(cancion['artist_id'], cancion)
+        lt.addLast(entry['canciones'], cancion)
+        mp.put(cancionesInst, cancion['artist_id'], entry)
+    else:
+        entry = me.getValue(artentry)
+        lt.addLast(entry['canciones'], cancion)
+    return dataentry
+
+def newDataEntry(cancion):
+    """
+    Crea una entrada en el indice por fechas, es decir en el arbol
+    binario.
+    """
+    entry = {'instrumentalness': None}
+    entry['instrumentalness'] = mp.newMap(numelements=2000,
+                                     maptype='CHAINING',
+                                     loadfactor=4.0,
+                                     comparefunction=compareArtist)
+    #entry['lstcanciones'] = lt.newList('ARRAY_list', compareDates)
+    return entry
+
+def newArtEntry(artista, crime):
+    """
+    Crea una entrada en el indice por tipo de crimen, es decir en
+    la tabla de hash, que se encuentra en cada nodo del arbol.
+    """
+    Artentry = {'artista': None , 'canciones': None}
+    Artentry['artista'] = artista
+    Artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
+    return Artentry
 
 
 def newEntryValue(valor, musica):
@@ -102,17 +137,6 @@ def addTrack(lista, musica):
 #        mp.put(caracteristicas, llavecaract, valorarbol)
 #        addTablas(valorarbol, musica, llavecaract)
 
-def addIntrumentalness2(catalog, musica):
-    caracteristicas = catalog['Avance RBT']
-    llavecaract = '\ufeff"instrumentalness"'
-    existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
-    if not existcaract:
-        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
-        mp.put(caracteristicas, llavecaract, valorarbol)
-        addTablas(valorarbol, musica, llavecaract)
-    #entry = mp.get(caracteristicas, llavecaract)
-    #caracter = me.getValue(entry)
-    #print(catalog['caracteristicas'])
 
 #def addTablas(arbol, musica, caracteristica):
 #    llavecaract = musica[caracteristica]
@@ -188,4 +212,27 @@ def compareValuesInstrumentalness(valor1, valor2):
     else:
         return -1
 
+def compareArtist(artist1, artist2):
+    """
+    Compara dos tipos de crimenes
+    """
+    artist = me.getKey(artist2)
+    if (artist1 == artist):
+        return 0
+    elif (artist1 > artist):
+        return 1
+    else:
+        return -1
+
+def compareCanciones(cancion1, cancion2):
+    """
+    Compara dos tipos de crimenes
+    """
+    cancion = me.getKey(cancion2)
+    if (cancion1 == cancion):
+        return 0
+    elif (cancion1 > cancion):
+        return 1
+    else:
+        return -1
 # Funciones de ordenamiento
