@@ -42,7 +42,8 @@ los mismos.
 # Construccion de modelos
 
 def newCatalog():
-    catalog = {'caracteristicas': None, # Tabla de Hash en la que las llaves son
+    catalog = {'caracteristicas': None,
+                "Avance RBT": None # Tabla de Hash en la que las llaves son
                                         # los nombres de las características y los
                                         # valores son un árbol Rojo-Negro.
                'árbol rbt': None
@@ -101,6 +102,14 @@ def addTrack(lista, musica):
 #        mp.put(caracteristicas, llavecaract, valorarbol)
 #        addTablas(valorarbol, musica, llavecaract)
 
+def addIntrumentalness2(catalog, musica):
+    caracteristicas = catalog['Avance RBT']
+    llavecaract = '\ufeff"instrumentalness"'
+    existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
+    if not existcaract:
+        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
+        mp.put(caracteristicas, llavecaract, valorarbol)
+        addTablas(valorarbol, musica, llavecaract)
     #entry = mp.get(caracteristicas, llavecaract)
     #caracter = me.getValue(entry)
     #print(catalog['caracteristicas'])
