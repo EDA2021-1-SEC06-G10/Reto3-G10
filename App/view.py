@@ -64,7 +64,8 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = initCatalog()
         loadData = controller.loadData(catalog)
-        #print_catalog(catalog, 20)
+        lista = controller.intentoConsulta(catalog)
+        #print_catalog(lista, 10)
         #print('Artistas cargados:' + str(lt.size(catalog['valores_artistid'])))
         #print('Tracks cargados:' + str(lt.size(catalog['valores_trackid']))
 
