@@ -45,6 +45,7 @@ def newCatalog():
     catalog = {'caracteristicas': None, # Tabla de Hash en la que las llaves son
                                         # los nombres de las características y los
                                         # valores son un árbol Rojo-Negro.
+               'árbol rbt': None
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
@@ -52,98 +53,130 @@ def newCatalog():
                                            loadfactor=4.0,
                                            comparefunction=compareKeys                                              
                                           )
+    
+    catalog['árbol_rbt_instrumentalness'] = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
 
     return catalog
 
-def addIntrumentalness(catalog, musica):
-    caracteristicas = catalog['caracteristicas']
-    llavecaract = '\ufeff"instrumentalness"'
-    existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
-    if not existcaract:
-        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
-        mp.put(caracteristicas, llavecaract, valorarbol)
-        addTablas(valorarbol, musica, llavecaract)
+# Funciones para agregar información al catalogo
 
-    #entry = mp.get(caracteristicas, llavecaract)
-    #caracter = me.getValue(entry)
-    #print(catalog['caracteristicas'])
-    #print(valorarbol)
+def addThingsToTree(catalog, musica):
+    arbol = catalog['árbol_rbt_instrumentalness']
+    llave = musica['\ufeff"instrumentalness"']
+    entry = om.get(arbol, llave)
+    if entry is None:
+        valorEntrada = newEntryValue(llave, musica)
+        om.put(arbol, llave, valorEntrada)
+    else:
+        valorEntrada = me.getValue(entry)
+    addValueIndex(valorEntrada, musica)
+    print(om.get(arbol, '0.0'))
 
-def addTablas(arbol, musica, caracteristica):
-    llavecaract = musica[caracteristica]
-    existcaract = om.contains(arbol, llavecaract)
-    if not existcaract:
-        valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5)
-        om.put(arbol, llavecaract, valormap)
-    addArtistsKey(valormap, musica)
-    addTracksKey(valormap, musica)
+def addValueIndex(dict, musica):
 
-    #entry = mp.get(arbol, llavecaract)
-    #caracter = me.getValue(entry)
 
-def addArtistsKey(tabla, musica):
-    llavecaract = 'artist_id'
-    existcaract = mp.contains(tabla, llavecaract)
-    if not existcaract:
-        lista = lt.newList('ARRAY_LIST', cmpfunction=compareArtistIds)
-        mp.put(tabla, llavecaract, lista)
-    addArtist(lista, musica)
-    
-    #entry = mp.get(tabla, llavecaract)
-    #caracter = me.getValue(entry)
-
-def addTracksKey(tabla, musica):
-    llavecaract = 'track_id'
-    existcaract = mp.contains(tabla, llavecaract)
-    if not existcaract:
-        lista = lt.newList('ARRAY_LIST', cmpfunction=compareTrackIds)
-        mp.put(tabla, llavecaract, lista)
-    addTrack(lista, musica)
-    
-    #entry = mp.get(tabla, llavecaract)
-    #caracter = me.getValue(entry)
+def newEntryValue(valor, musica):
+    entry = {'artist_id': None, 'track_id': None}
+    entry['artist_id'] = 1 #lt.newList('ARRAY_LIST')
+    entry['track_id'] = 2 #lt.newList('ARRAY_LIST')
+    #addArtist(entry['artist_id'], musica)
+    #addTrack(entry['track_id'], musica)
+    return entry
 
 def addArtist(lista, musica):
     lt.addLast(lista, musica['artist_id'])
-    print(lista)
 
 def addTrack(lista, musica):
     lt.addLast(lista, musica['track_id'])
 
-# Funciones para agregar informacion al catalogo
+
+# ============================ o =================================
+
+#def addIntrumentalness(catalog, musica):
+#    caracteristicas = catalog['caracteristicas']
+#    llavecaract = '\ufeff"instrumentalness"'
+#     existcaract = mp.contains(catalog['caracteristicas'], llavecaract)
+#    if not existcaract:
+#        valorarbol = om.newMap(omaptype='RBT', comparefunction=compareValuesInstrumentalness)
+#        mp.put(caracteristicas, llavecaract, valorarbol)
+#        addTablas(valorarbol, musica, llavecaract)
+
+    #entry = mp.get(caracteristicas, llavecaract)
+    #caracter = me.getValue(entry)
+    #print(catalog['caracteristicas'])
+
+#def addTablas(arbol, musica, caracteristica):
+#    llavecaract = musica[caracteristica]
+#    existcaract = om.contains(arbol, llavecaract)
+#    if not existcaract:
+#        valormap = mp.newMap(2, maptype='CHAINING', loadfactor=0.5)
+#        om.put(arbol, llavecaract, valormap)
+    #addArtistsKey(valormap, musica)
+    #addTracksKey(valormap, musica)
+
+    #entry = mp.get(arbol, llavecaract)
+    #caracter = me.getValue(entry)
+
+#def addArtistsKey(tabla, musica):
+#    lista = lt.newList('ARRAY_LIST', cmpfunction=compareArtistIds)
+#    llavecaract = 'artist_id'
+#    existcaract = mp.contains(tabla, llavecaract)
+#    if existcaract == False or existcaract == True:
+#        mp.put(tabla, llavecaract, lista)
+    #addArtist(lista, musica)
+    
+    #entry = mp.get(tabla, llavecaract)
+    #caracter = me.getValue(entry)
+
+#def addTracksKey(tabla, musica):
+#    lista = lt.newList('ARRAY_LIST', cmpfunction=compareTrackIds)
+#    llavecaract = 'track_id'
+#    existcaract = mp.contains(tabla, llavecaract)
+#    if existcaract == False or existcaract == True:
+#        mp.put(tabla, llavecaract, lista)
+    #addTrack(lista, musica)
+    
+    #entry = mp.get(tabla, llavecaract)
+    #caracter = me.getValue(entry)
+
+#def addArtist(lista, musica):
+#    lt.addLast(lista, musica['artist_id'])
+
+#def addTrack(lista, musica):
+#    lt.addLast(lista, musica['track_id'])
+
 
 # Funciones para creacion de datos
 
 # Funciones de consulta
 
+def intentoConsulta(catalog):
+    arbol = catalog['árbol_rbt_instrumentalness']
+    llaves = om.keys(arbol, '0.0', '0.2')
+    valores = om.values(arbol, '0.0', '0.2')
+
+    return llaves
+
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-def compareArtistIds(musica1, musica2):
-    if str(musica1['artist_id']) > str(musica2['artist_id']):
-        return 1
-    elif str(musica1['artist_id']) < str(musica2['artist_id']):
-        return -1
-    else:
-        return 0
+def compareArtistIds(musica, artist_id):
+    result = (artist_id == musica['artist_id'])
+    return result
 
-def compareTrackIds(musica1, musica2):
-    if musica1['track_id'] > musica2['track_id']:
-        return 1
-    elif musica1['track_id'] < musica2['track_id']:
-        return -1
-    else:
-        return 0
+
+def compareTrackIds(musica, track_id):
+    result = (track_id == musica['track_id'])
+    return result
 
 def compareKeys(musica1, musica2):
-
     return None
 
-def compareValuesInstrumentalness(musica1, musica2):
-    if musica1['\ufeff"instrumentalness"'] > musica2['\ufeff"instrumentalness"']:
+def compareValuesInstrumentalness(valor1, valor2):
+    if valor1 > valor2:
         return 1
-    elif musica1['\ufeff"instrumentalness"'] < musica2['\ufeff"instrumentalness"']:
-        return -1
-    else:
+    elif valor1 == valor2:
         return 0
+    else:
+        return -1
 
 # Funciones de ordenamiento
