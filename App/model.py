@@ -65,14 +65,15 @@ def addSong(catalog, cancion):
     return catalog
 
 def addSongToTree(mapt, cancion):
-    instrumentalness= cancion['instrumentalness']
-    entry = om.get(mapt, instrumentalness )
+    instrumentalness = cancion['\ufeff"instrumentalness"']
+    entry = om.get(mapt, instrumentalness)
     if entry is None:
-        dataentry =  newDataEntry(cancion)
+        dataentry = newDataEntry(cancion)
         om.put(mapt, instrumentalness, dataentry)
     else:
         dataentry = me.getValue(entry)
     addValueIndex(dataentry, cancion)
+    #print(om.get(mapt, '0.0'))
     return mapt
 
 def addValueIndex(dataentry, cancion):
@@ -80,11 +81,12 @@ def addValueIndex(dataentry, cancion):
     artentry = mp.get(cancionesInst, cancion['artist_id'])
     if (artentry is None):
         entry = newArtEntry(cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion)
+        lt.addLast(entry['canciones'], cancion['track_id'])
         mp.put(cancionesInst, cancion['artist_id'], entry)
     else:
         entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion)
+        lt.addLast(entry['canciones'], cancion['track_id'])
+
     return dataentry
 
 def newDataEntry(cancion):
@@ -93,11 +95,11 @@ def newDataEntry(cancion):
     binario.
     """
     entry = {'instrumentalness': None}
-    entry['instrumentalness'] = mp.newMap(numelements=2000,
+    entry['instrumentalness'] = mp.newMap(numelements=10,
                                      maptype='CHAINING',
                                      loadfactor=4.0,
                                      comparefunction=compareArtist)
-    #entry['lstcanciones'] = lt.newList('ARRAY_list', compareDates)
+
     return entry
 
 def newArtEntry(artista, crime):
@@ -105,26 +107,10 @@ def newArtEntry(artista, crime):
     Crea una entrada en el indice por tipo de crimen, es decir en
     la tabla de hash, que se encuentra en cada nodo del arbol.
     """
-    Artentry = {'artista': None , 'canciones': None}
-    Artentry['artista'] = artista
-    Artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
-    return Artentry
-
-
-def newEntryValue(valor, musica):
-    entry = {'artist_id': None, 'track_id': None}
-    entry['artist_id'] = 1 #lt.newList('ARRAY_LIST')
-    entry['track_id'] = 2 #lt.newList('ARRAY_LIST')
-    #addArtist(entry['artist_id'], musica)
-    #addTrack(entry['track_id'], musica)
-    return entry
-
-def addArtist(lista, musica):
-    lt.addLast(lista, musica['artist_id'])
-
-def addTrack(lista, musica):
-    lt.addLast(lista, musica['track_id'])
-
+    artentry = {'artista': None , 'canciones': None}
+    artentry['artista'] = artista
+    artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
+    return artentry
 
 # ============================ o =================================
 
@@ -184,11 +170,15 @@ def addTrack(lista, musica):
 # Funciones de consulta
 
 def intentoConsulta(catalog):
-    arbol = catalog['árbol_rbt_instrumentalness']
-    llaves = om.keys(arbol, '0.0', '0.2')
-    valores = om.values(arbol, '0.0', '0.2')
-
-    return llaves
+    arbol = catalog['Avance RBT']
+    llaves = om.keys(arbol, '0.0', '5.59e-06')
+    valores = om.values(arbol, '0.0', '5.59e-06')
+    print(llaves)
+    print('------------------')
+    print(valores)
+    #key_value = mp.get(valores['intrumentalness'], 'artista')
+    #value = me.getValue(key_value)
+    #return llaves
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
