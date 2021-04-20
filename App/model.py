@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as mer
 from DISClib.ADT import orderedmap as om
 import datetime
 assert cf
@@ -549,16 +550,18 @@ def indexHeght(catalog):
     return om.height(catalog['Avance RBT'])
 
 def indexSize(catalog):
-    return om.size(catalog['Avance RBT'])
+    return om.size(catalog['instrumentalness_RBT'])
 
-def intentoConsulta(catalog, categoria, rango_menor, rango_mayor):
+def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
     arbol = me.getValue(llaves)
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
-    total_tamaño = 0
+    total_canciones = 0
+    total_artistas = 0
+    lista_artistas = lt.newList('ARRAY_LIST', cmpfunction=compareArtistas)
     i = 0
 
     while i <= tamaño_tabla:
@@ -566,12 +569,53 @@ def intentoConsulta(catalog, categoria, rango_menor, rango_mayor):
         tablaHash = tabla['caracteristica']
         key_value = mp.get(tablaHash, 'información')
         value = me.getValue(key_value)
-        lista = value['canciones']
-        tamaño = lt.size(lista)
-        total_tamaño += tamaño
+        lista_canciones = value['canciones']
+        lista_artists = lt.addLast(lista_artistas, value['artista'])
+        artistas_unicos = artistasUnicos(lista_artistas)
+        tamaño_artista = lt.size(artistas_unicos)
+        tamaño_canciones = lt.size(lista_canciones)
+        total_canciones += tamaño_canciones
         i += 1
 
-    return total_tamaño
+    return (total_canciones, total_artistas)
+
+def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_menor2, rango_mayor1, rango_mayor2):
+    total_tamaño = 0
+    hashTabla = catalog['caracteristicas']
+    llaves1 = mp.get(hashTabla, categoria1)
+    llaves2 = mp.get(hashTabla, categoria2)
+    arbol1 = me.getValue(llaves1)
+    arbol2 = me.getValue(llaves2)
+    valores1 = om.values(arbol1, rango_menor1, rango_mayor1)
+    valores2 = om.values(arbol2, rango_menor2, rango_mayor2)
+    tamaño_tabla = lt.size(valores1)
+    lista_canciones = lt.newList('ARRAY_LIST')
+    total_canciones1 = 0
+    total_canciones2 = 0
+    i = 0
+
+    while i <= tamaño_tabla:
+        tabla1 = lt.getElement(valores1, i)
+        tabla2 = lt.getElement(valores2, i)
+        tablaHash1 = tabla1['caracteristica']
+        tablaHash2 = tabla2['caracteristica']
+        key_value1 = mp.get(tablaHash1, 'información')
+        key_value2 = mp.get(tablaHash2, 'información')
+        value1 = me.getValue(key_value1)
+        value2 = me.getValue(key_value2)
+        lista_canciones1 = value1['canciones']
+        lista_canciones2 = value2['canciones']
+        todas_canciones = lt.addLast(lista_canciones, lista_canciones1)
+        todas_canciones = lt.addLast(lista_canciones, lista_canciones2)
+        tamaño_canciones1 = lt.size(lista_canciones1)
+        tamaño_canciones2 = lt.size(lista_canciones2)
+        total_canciones1 += tamaño_canciones1
+        total_canciones2 += tamaño_canciones2
+        i += 1
+
+    total = total_canciones1 + total_canciones2
+
+    return (total, lista_canciones)
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -590,6 +634,11 @@ def compareValues(valor1, valor2):
         return 0
     else:
         return -1
+
+def compareArtistas(artist1, artist2):
+    result = (artist1 > artist2)
+    return result
+
 
 def compareArtist(artist1, artist2):
     """
@@ -616,3 +665,26 @@ def compareCanciones(cancion1, cancion2):
         return -1
 
 # Funciones de ordenamiento
+
+def artistasUnicos(lista):
+    size = lt.size(lista)
+    sub_list = lt.subList(lista,0,size)
+    sub_list = sub_list.copy()
+    sorted_list = mer.sort(sub_list, compareArtistas)
+    print(sorted_list)
+    size_sorted_list = lt.size(sorted_list)
+    i = 0
+    while i < size_sorted_list:
+        if i != size_sorted_list:
+            artista1 = lt.getElement(sorted_list, i)
+            artista2 = lt.getElement(sorted_list, i + 1)
+          
+            if (artista1 == artista2):
+                lt.deleteElement(sorted_list, i)
+            i += 1
+        else:
+            if i == size_sorted_list:
+                break
+
+    sub_list = None
+    return sorted_list

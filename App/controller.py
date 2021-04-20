@@ -53,5 +53,8 @@ def loadContent(catalog):
 def indexSize(catalog):
     return model.indexSize(catalog)
 
-def intentoConsulta(catalog, categoria, rango_menor, rango_mayor):
-    return model.intentoConsulta(catalog, categoria, rango_menor, rango_mayor)
+def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
+    return model.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
+
+def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_menor2, rango_mayor1, rango_mayor2):
+    return model.consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_menor2, rango_mayor1, rango_mayor2)
