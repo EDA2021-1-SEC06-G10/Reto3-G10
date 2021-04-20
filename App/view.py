@@ -65,6 +65,9 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = initCatalog()
         loadData = controller.loadData(catalog)
+        categoria = 'instrumentalness'
+        rango_menor = '0.0'
+        rango_mayor = '0.3'
         #print('Elementos en el árbol: ' + str(controller.indexSize(catalog)))
 
 
