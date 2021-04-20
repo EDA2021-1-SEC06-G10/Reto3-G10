@@ -39,12 +39,13 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- ")
 
-def print_catalog(catalog, sample):
-    i = 1
-    while i <= sample:
-        content = lt.getElement(catalog, i)
-        print('artist_id: ' + content['artist_id'] + '||' + 'track_id' + content['track_id'] + '.')
-        i += 1
+def print_Req1(tamaño, rango_menor, rango_mayor):
+    if tamaño == -1:
+        print('La categoría ingresada no existe en el archivo cargado.')
+    else:
+        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' han habido: ' + str(tamaño) + ' canciones.')
+        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' hay ' + str(None) + ' artistas.')
+
 
 def initCatalog():
     return controller.initCatalog()
@@ -64,14 +65,17 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = initCatalog()
         loadData = controller.loadData(catalog)
-        lista = controller.intentoConsulta(catalog)
-        #print_catalog(lista, 10)
-        #print('Artistas cargados:' + str(lt.size(catalog['valores_artistid'])))
-        #print('Tracks cargados:' + str(lt.size(catalog['valores_trackid']))
+        #print('Elementos en el árbol: ' + str(controller.indexSize(catalog)))
 
 
     elif int(inputs[0]) == 2:
-        pass
+        categoria = input('Ingrese la categoría de la que quiere ver información: ')
+        categoria = categoria.lower()
+        rango_menor = input('Ingrese el rango menor de valores que quiere ver: ')
+        rango_mayor = input('Ingrese el rango mayor de valores que quiere ver: ')
+        canciones = controller.intentoConsulta(catalog, categoria, rango_menor, rango_mayor)
+        print_Req1(canciones, rango_menor, rango_mayor)
+    
     elif int(inputs[0]) == 3:
         pass
     elif int(inputs[0]) == 4:
