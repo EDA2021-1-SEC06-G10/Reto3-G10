@@ -570,32 +570,24 @@ def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
-    print(llaves)
     arbol = me.getValue(llaves)
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     total_canciones = 0
     total_artistas = 0
-    lista_artistas = lt.newList('ARRAY_LIST')
-    canciones = lt.newList('ARRAY_LIST')
     i = 1
 
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
-        tablaHash = tabla['caracteristica']
-        key_value = mp.get(tablaHash, 'información')
-        value = me.getValue(key_value)
-        lista_canciones = value['canciones']
-        lt.addLast(lista_artistas, value['artista'])
-        lt.addLast(canciones, lista_canciones)
-        artistas_unicos = artistasUnicos(lista_artistas)
-        tamaño_artista = lt.size(artistas_unicos)
-        tamaño_canciones = lt.size(lista_canciones)
-        total_canciones += tamaño_canciones
+        lista_canciones = tabla['reproducciones']
+        lista_artistas = tabla['artistas']
+        size_canciones = lt.size(lista_canciones)
+        size_artistas = lt.size(lista_artistas)
+        total_artistas += size_artistas
+        total_canciones += size_canciones
         i += 1
-
-    #print(total_canciones)
-    return (total_canciones, total_artistas, canciones)
+    
+    return (total_canciones, total_artistas)
 
 # def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
 #     lista = lt.newList('ARRAY_LIST')

@@ -45,7 +45,7 @@ def print_Req1(tamaño, rango_menor, rango_mayor):
         print('La categoría ingresada no existe en el archivo cargado.')
     else:
         print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' han habido: ' + str(tamaño[0]) + ' canciones.')
-        #print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' hay ' + str(tamaño[1]) + ' artistas.')
+        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' hay ' + str(tamaño[1]) + ' artistas.')
         #print('Un tímido: ' + str(tamaño[2]))
 
 def print_Req2(total, lista):
@@ -90,8 +90,8 @@ while True:
     elif int(inputs[0]) == 2:
         categoria = 'instrumentalness'#input('Ingrese la categoría de la que quiere ver información: ')
         categoria = categoria.lower()
-        rango_menor = '0.0'#input('Ingrese el rango menor de valores que quiere ver: ')
-        rango_mayor = '0.3'#input('Ingrese el rango mayor de valores que quiere ver: ')
+        rango_menor = 0.0#input('Ingrese el rango menor de valores que quiere ver: ')
+        rango_mayor = 0.3#input('Ingrese el rango mayor de valores que quiere ver: ')
         canciones = controller.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
         print_Req1(canciones, rango_menor, rango_mayor)
     
