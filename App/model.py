@@ -75,16 +75,16 @@ def newCatalog():
 
 def addSong(catalog, cancion):
     addInstrumentalnessTreesToHashTable(catalog, cancion)
-    addLivenessTreesToHashTable(catalog, cancion)
-    addSpeechinessTreesToHashTable(catalog, cancion)
-    addDanceabilityTreesToHashTable(catalog, cancion)
-    addValenceTreesToHashTable(catalog, cancion)
-    addLoudnessTreesToHashTable(catalog, cancion)
-    addTempoTreesToHashTable(catalog, cancion)
-    addAcousticnessTreesToHashTable(catalog, cancion)
-    addEnergyTreesToHashTable(catalog, cancion)
-    addModeTreesToHashTable(catalog, cancion)
-    addKeyTreesToHashTable(catalog, cancion)
+    # addLivenessTreesToHashTable(catalog, cancion)
+    # addSpeechinessTreesToHashTable(catalog, cancion)
+    # addDanceabilityTreesToHashTable(catalog, cancion)
+    # addValenceTreesToHashTable(catalog, cancion)
+    # addLoudnessTreesToHashTable(catalog, cancion)
+    # addTempoTreesToHashTable(catalog, cancion)
+    # addAcousticnessTreesToHashTable(catalog, cancion)
+    # addEnergyTreesToHashTable(catalog, cancion)
+    # addModeTreesToHashTable(catalog, cancion)
+    # addKeyTreesToHashTable(catalog, cancion)
 
     return catalog
 
@@ -106,10 +106,10 @@ def addInstrumentalnessTreesToHashTable(catalog, cancion):
 
 def addSongToTreeInstrumentalness(mapt, cancion):
     caracteristica = 'instrumentalness'
-    categoria = cancion['\ufeff"instrumentalness"']
+    categoria = cancion["instrumentalness"]
     entry = om.get(mapt, categoria)
     filtrado={}
-    filtrado["instrumentalness"]= cancion['\ufeff"instrumentalness"']
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
     filtrado["tempo"]= cancion["tempo"]
     filtrado["danceability"]= cancion["danceability"]
     filtrado["energy"]= cancion["energy"]
