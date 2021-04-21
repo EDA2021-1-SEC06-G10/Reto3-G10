@@ -84,7 +84,7 @@ while True:
         rango_mayor2 = '0.7'
         #canciones = controller.consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_menor2, rango_mayor1, rango_mayor2)
         print('Elementos en el árbol: ' + str(controller.indexSize(catalog)))
-        print(catalog)
+        #print(catalog)
 
 
     elif int(inputs[0]) == 2:

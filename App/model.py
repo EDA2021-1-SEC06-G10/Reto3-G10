@@ -109,6 +109,7 @@ def addSongToTreeInstrumentalness(mapt, cancion):
     categoria = cancion["instrumentalness"]
     entry = om.get(mapt, categoria)
     filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
     filtrado["instrumentalness"]= cancion["instrumentalness"]
     filtrado["tempo"]= cancion["tempo"]
     filtrado["danceability"]= cancion["danceability"]
@@ -118,7 +119,7 @@ def addSongToTreeInstrumentalness(mapt, cancion):
         om.put(mapt, categoria, dataentry)
         lt.addLast(dataentry['canciones'], filtrado)
         lt.addLast(dataentry['artistas'], cancion["artist_id"])
-        lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
        
     else:
         dataentry = me.getValue(entry)
