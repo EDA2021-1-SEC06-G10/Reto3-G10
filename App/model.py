@@ -544,6 +544,8 @@ def addSongToTreeKey(mapt, cancion):
 
 #     return entry
 
+# Funciones para creacion de datos
+
 def newArtEntry(caracteristica, cancion):
     """
     Crea una entrada en el indice por tipo de crimen, es decir en
@@ -556,14 +558,12 @@ def newArtEntry(caracteristica, cancion):
     artentry["reproducciones"]= lt.newList('ARRAY_LIST')
     return artentry
 
-# Funciones para creacion de datos
-
 # Funciones de consulta
 
 def indexHeght(catalog):
     return om.height(catalog['Avance RBT'])
 
-def indexSize(catalog):
+def indexSizeInstrumentalness(catalog):
     return om.size(catalog['instrumentalness_RBT'])
 
 def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
@@ -575,49 +575,48 @@ def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     tamaño_tabla = lt.size(valores)
     total_canciones = 0
     total_artistas = 0
+    canciones = lt.newList('ARRAY_LIST')
     i = 1
 
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
         lista_canciones = tabla['reproducciones']
         lista_artistas = tabla['artistas']
+        lt.addLast(canciones, lista_canciones)
         size_canciones = lt.size(lista_canciones)
         size_artistas = lt.size(lista_artistas)
-        print(lista_artistas)
         total_artistas += size_artistas
         total_canciones += size_canciones
         i += 1
+       
+    return (total_canciones, total_artistas, canciones)
+
+def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
+    lista = lt.newList('ARRAY_LIST')
     
-    return (total_canciones, total_artistas)
+    tupla_1 = consultaReq1(catalog, 'energy', rango_menor1, rango_mayor1)
+    total_canciones1 = tupla_1[0]
+    lista_canciones1 = tupla_1[2]
+    size1 = lt.size(lista_canciones1)
+    i = 0
+    while i < size1:
+        cancion = lt.getElement(lista_canciones1, i)
+        lt.addLast(lista, cancion)
+        i += 1
+    #print(lista_canciones1)
+    #print('-----')
 
-# def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
-#     lista = lt.newList('ARRAY_LIST')
-    
-#     tupla_1 = consultaReq1(catalog, 'energy', rango_menor1, rango_mayor1)
-#     total_canciones1 = tupla_1[0]
-#     lista_canciones1 = tupla_1[2]
-#     size1 = lt.size(lista_canciones1)
-#     i = 0
-#     while i < size1:
-#         cancion = lt.getElement(lista_canciones1, i)
-#         lt.addLast(lista, cancion)
-#         i += 1
-
-#     print(lista_canciones1)
-#     print('-----')
-
-#     tupla_2 = consultaReq1(catalog, 'danceability', rango_menor2, rango_mayor2)
-#     total_canciones2 = tupla_2[0]
-#     lista_canciones2 = tupla_2[2]
-#     size2 = lt.size(lista_canciones2)
-#     j = 0
-#     while j < size2:
-#         cancion = lt.getElement(lista_canciones2, i)
-#         lt.addLast(lista, cancion)
-#         j += 1
-
-#     print(lista_canciones2)
-#     print(lista)
+    tupla_2 = consultaReq1(catalog, 'danceability', rango_menor2, rango_mayor2)
+    total_canciones2 = tupla_2[0]
+    lista_canciones2 = tupla_2[2]
+    size2 = lt.size(lista_canciones2)
+    j = 0
+    while j < size2:
+        cancion = lt.getElement(lista_canciones2, i)
+        lt.addLast(lista, cancion)
+        j += 1
+    #print(lista_canciones2)
+    print(lista)
 
 
 

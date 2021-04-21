@@ -70,8 +70,8 @@ def loadContent(catalog):
 
 # Funciones de consulta sobre el catálogo
 
-def indexSize(catalog):
-    return model.indexSize(catalog)
+def indexSizeInstrumentalness(catalog):
+    return model.indexSizeInstrumentalness(catalog)
 
 def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     return model.consultaReq1(catalog, categoria, rango_menor, rango_mayor)

@@ -38,7 +38,12 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Música dependiendo de tus gustos: ")
+    print("3- ¡Música para festejar! (Energy y Danceability): ")
+    print("4- Música para estudiar (Instrumentalness y Tempo): ")
+    print("5- Reproducciones según un género musical: ")
+    print("6- Género más escuchado en un rango de horas del día: ")
+    print("0- Salir")
 
 def print_Req1(tamaño, rango_menor, rango_mayor):
     if tamaño == -1:
@@ -76,36 +81,28 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = initCatalog()
         loadData = controller.loadData(catalog)
-        categoria1 = 'energy'
-        categoria2 = 'danceability'
-        rango_menor1 = '0.6'
-        rango_mayor1 = '0.7'
-        rango_menor2 = '0.6'
-        rango_mayor2 = '0.7'
-        #canciones = controller.consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_menor2, rango_mayor1, rango_mayor2)
-        print('Elementos en el árbol: ' + str(controller.indexSize(catalog)))
-        #print(catalog)
+        print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
 
 
     elif int(inputs[0]) == 2:
-        categoria = 'tempo'#input('Ingrese la categoría de la que quiere ver información: ')
+        categoria = 'instrumentalness'#input('Ingrese la categoría de la que quiere ver información: ')
         categoria = categoria.lower()
-        rango_menor = 90 #input('Ingrese el rango menor de valores que quiere ver: ')
-        rango_mayor = 120 #input('Ingrese el rango mayor de valores que quiere ver: ')
+        rango_menor = 0.0 #input('Ingrese el rango menor de valores que quiere ver: ')
+        rango_mayor = 0.3 #input('Ingrese el rango mayor de valores que quiere ver: ')
         canciones = controller.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
         print_Req1(canciones, rango_menor, rango_mayor)
     
     elif int(inputs[0]) == 3:
         categoria1 = 'energy'
         categoria2 = 'danceability'
+        rango_menor1 = 0.6
+        rango_mayor1 = 0.7
+        rango_menor2 = 0.6
+        rango_mayor2 = 0.7
         #rango_menor1 = input('Ingrese el rango menor de Energy: ')
         #rango_mayor1 = input('Ingrese el rango mayor de Energy: ')
         #rango_menor2 = input('Ingrese el rango menor de Danceability: ')
         #rango_mayor2 = input('Ingrese el rango mayor de Danceability: ')
-        rango_menor1 = '0.6'
-        rango_mayor1 = '0.7'
-        rango_menor2 = '0.6'
-        rango_mayor2 = '0.7'
         canciones = controller.consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
         #print_Req2(canciones[0], canciones[1])
 
