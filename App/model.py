@@ -123,9 +123,13 @@ def addSongToTreeInstrumentalness(mapt, cancion):
        
     else:
         dataentry = me.getValue(entry)
-        lt.addLast(dataentry['canciones'], filtrado)
-        lt.addLast(dataentry['artistas'], cancion["artist_id"])
-        lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
 
 # def addValueIndexInstrumentalness(dataentry, cancion):
@@ -230,7 +234,7 @@ def addDanceabilityTreesToHashTable(catalog, cancion):
     entry = mp.get(tabla, categoria)
     if entry is None:
         mp.put(tabla, categoria, arbol)
-    addSongToTreeInstrumentalness(arbol, cancion)
+    addSongToTreeDanceability(arbol, cancion)
 
     return tabla
 
@@ -425,7 +429,7 @@ def addEnergyTreesToHashTable(catalog, cancion):
     entry = mp.get(tabla, categoria)
     if entry is None:
         mp.put(tabla, categoria, arbol)
-    addSongToTreeInstrumentalness(arbol, cancion)
+    addSongToTreeEnergy(arbol, cancion)
 
     return tabla
 
@@ -448,9 +452,13 @@ def addSongToTreeEnergy(mapt, cancion):
        
     else:
         dataentry = me.getValue(entry)
-        lt.addLast(dataentry['canciones'], filtrado)
-        lt.addLast(dataentry['artistas'], cancion["artist_id"])
-        lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
 
 # =====
@@ -582,11 +590,17 @@ def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
         tabla = lt.getElement(valores, i)
         lista_canciones = tabla['reproducciones']
         lista_artistas = tabla['artistas']
-        lt.addLast(canciones, lista_canciones)
+        lista_reproducciones = tabla['canciones']
         size_canciones = lt.size(lista_canciones)
         size_artistas = lt.size(lista_artistas)
+        size_reproducciones = lt.size(lista_reproducciones)
         total_artistas += size_artistas
         total_canciones += size_canciones
+        j = 1
+        while j <= size_reproducciones:
+            lista_canciones_unicas = lt.getElement(tabla['canciones'], j)
+            lt.addLast(canciones, lista_canciones_unicas)
+            j += 1
         i += 1
        
     return (total_canciones, total_artistas, canciones)
@@ -606,16 +620,18 @@ def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2
     #print(lista_canciones1)
     #print('-----')
 
-    tupla_2 = consultaReq1(catalog, 'danceability', rango_menor2, rango_mayor2)
+    tupla_2 = consultaReq1(catalog, 'instrumentalness', rango_menor2, rango_mayor2)
     total_canciones2 = tupla_2[0]
     lista_canciones2 = tupla_2[2]
     size2 = lt.size(lista_canciones2)
     j = 0
     while j < size2:
-        cancion = lt.getElement(lista_canciones2, i)
+        cancion = lt.getElement(lista_canciones2, j)
         lt.addLast(lista, cancion)
         j += 1
-    #print(lista_canciones2)
+    
+    canciones = lista['elements']
+    size = lt.size(lista)
     print(lista)
 
 
@@ -639,24 +655,32 @@ def compareValues(valor1, valor2):
         return -1
 
 def compareArtistas(artist1, cancion):
-    result = (artist1 == cancion["artist_id"])
-    return result
-
-def compareCanciones(cancion1, cancion):
-    result = (cancion1 == cancion["track_id"])
-    return result
-
-def compareArtist(artist1, artist2):
-    """
-    Compara dos tipos de artistas
-    """
-    artist = me.getKey(artist2)
-    if (artist1 == artist):
+    if artist1 == cancion:
         return 0
-    elif (artist1 > artist):
+    elif artist1 > cancion:
         return 1
     else:
         return -1
+
+def compareCanciones(cancion1, cancion):
+    if cancion1 == cancion['track_id']:
+        return 0
+    elif cancion1 > cancion['track_id']:
+        return 1
+    else:
+        return -1
+
+# def compareArtist(artist1, artist2):
+#     """
+#     Compara dos tipos de artistas
+#     """
+#     artist = me.getKey(artist2)
+#     if (artist1 == artist):
+#         return 0
+#     elif (artist1 > artist):
+#         return 1
+#     else:
+#         return -1
 
 # def compareCanciones(cancion1, cancion2):
 #     """
