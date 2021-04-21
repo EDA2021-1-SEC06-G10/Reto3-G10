@@ -569,13 +569,15 @@ def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
+    print(llaves)
     arbol = me.getValue(llaves)
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     total_canciones = 0
     total_artistas = 0
-    lista_artistas = lt.newList('ARRAY_LIST', cmpfunction=compareArtistas)
-    i = 0
+    lista_artistas = lt.newList('ARRAY_LIST')
+    canciones = lt.newList('ARRAY_LIST')
+    i = 1
 
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
@@ -583,52 +585,47 @@ def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
         key_value = mp.get(tablaHash, 'información')
         value = me.getValue(key_value)
         lista_canciones = value['canciones']
-        lista_artists = lt.addLast(lista_artistas, value['artista'])
+        lt.addLast(lista_artistas, value['artista'])
+        lt.addLast(canciones, lista_canciones)
         artistas_unicos = artistasUnicos(lista_artistas)
         tamaño_artista = lt.size(artistas_unicos)
         tamaño_canciones = lt.size(lista_canciones)
         total_canciones += tamaño_canciones
         i += 1
 
-    return (total_canciones, total_artistas)
+    #print(total_canciones)
+    return (total_canciones, total_artistas, canciones)
 
-def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_menor2, rango_mayor1, rango_mayor2):
-    total_tamaño = 0
-    hashTabla = catalog['caracteristicas']
-    llaves1 = mp.get(hashTabla, categoria1)
-    llaves2 = mp.get(hashTabla, categoria2)
-    arbol1 = me.getValue(llaves1)
-    arbol2 = me.getValue(llaves2)
-    valores1 = om.values(arbol1, rango_menor1, rango_mayor1)
-    valores2 = om.values(arbol2, rango_menor2, rango_mayor2)
-    tamaño_tabla = lt.size(valores1)
-    lista_canciones = lt.newList('ARRAY_LIST')
-    total_canciones1 = 0
-    total_canciones2 = 0
-    i = 0
+# def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
+#     lista = lt.newList('ARRAY_LIST')
+    
+#     tupla_1 = consultaReq1(catalog, 'energy', rango_menor1, rango_mayor1)
+#     total_canciones1 = tupla_1[0]
+#     lista_canciones1 = tupla_1[2]
+#     size1 = lt.size(lista_canciones1)
+#     i = 0
+#     while i < size1:
+#         cancion = lt.getElement(lista_canciones1, i)
+#         lt.addLast(lista, cancion)
+#         i += 1
 
-    while i <= tamaño_tabla:
-        tabla1 = lt.getElement(valores1, i)
-        tabla2 = lt.getElement(valores2, i)
-        tablaHash1 = tabla1['caracteristica']
-        tablaHash2 = tabla2['caracteristica']
-        key_value1 = mp.get(tablaHash1, 'información')
-        key_value2 = mp.get(tablaHash2, 'información')
-        value1 = me.getValue(key_value1)
-        value2 = me.getValue(key_value2)
-        lista_canciones1 = value1['canciones']
-        lista_canciones2 = value2['canciones']
-        todas_canciones = lt.addLast(lista_canciones, lista_canciones1)
-        todas_canciones = lt.addLast(lista_canciones, lista_canciones2)
-        tamaño_canciones1 = lt.size(lista_canciones1)
-        tamaño_canciones2 = lt.size(lista_canciones2)
-        total_canciones1 += tamaño_canciones1
-        total_canciones2 += tamaño_canciones2
-        i += 1
+#     print(lista_canciones1)
+#     print('-----')
 
-    total = total_canciones1 + total_canciones2
+#     tupla_2 = consultaReq1(catalog, 'danceability', rango_menor2, rango_mayor2)
+#     total_canciones2 = tupla_2[0]
+#     lista_canciones2 = tupla_2[2]
+#     size2 = lt.size(lista_canciones2)
+#     j = 0
+#     while j < size2:
+#         cancion = lt.getElement(lista_canciones2, i)
+#         lt.addLast(lista, cancion)
+#         j += 1
 
-    return (total, lista_canciones)
+#     print(lista_canciones2)
+#     print(lista)
+
+
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -652,8 +649,13 @@ def compareArtistas(artist1, cancion):
     result = (artist1 == cancion["artist_id"])
     return result
 
+<<<<<<< HEAD
 def compareCanciones(cancion1, cancion):
     result = (cancion1 == cancion["track_id"])
+=======
+def compareCancion(cancion1, cancion2):
+    result = (cancion1['elements'][0] > cancion2['elements'][0])
+>>>>>>> c73048d45d7baabb969edfbcf18bc39de556f512
     return result
 
 def compareArtist(artist1, artist2):
@@ -701,6 +703,29 @@ def artistasUnicos(lista):
         else:
             if i == size_sorted_list:
                 break
+
+    sub_list = None
+    return sorted_list
+
+def cancionesUnicas(lista):
+    size = lt.size(lista)
+    sub_list = lt.subList(lista,0,size)
+    sub_list = sub_list.copy()
+    sorted_list = mer.sort(sub_list, compareCancion)
+    print(sorted_list)
+    # size_sorted_list = lt.size(sorted_list)
+    # i = 0
+    # while i < size_sorted_list:
+    #     if i != size_sorted_list:
+    #         artista1 = lt.getElement(sorted_list, i)
+    #         artista2 = lt.getElement(sorted_list, i + 1)
+          
+    #         if (artista1 == artista2):
+    #             lt.deleteElement(sorted_list, i)
+    #         i += 1
+    #     else:
+    #         if i == size_sorted_list:
+    #             break
 
     sub_list = None
     return sorted_list
