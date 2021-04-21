@@ -649,13 +649,8 @@ def compareArtistas(artist1, cancion):
     result = (artist1 == cancion["artist_id"])
     return result
 
-<<<<<<< HEAD
 def compareCanciones(cancion1, cancion):
     result = (cancion1 == cancion["track_id"])
-=======
-def compareCancion(cancion1, cancion2):
-    result = (cancion1['elements'][0] > cancion2['elements'][0])
->>>>>>> c73048d45d7baabb969edfbcf18bc39de556f512
     return result
 
 def compareArtist(artist1, artist2):

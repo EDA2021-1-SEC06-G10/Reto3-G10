@@ -54,8 +54,8 @@ def loadContent(catalog):
         adaptado["tempo"]= float(cancion["tempo"])
         adaptado["acousticness"]= float(cancion["acousticness"])
         adaptado["energy"]= float(cancion["energy"])
-        adaptado["mode"] = int(cancion['mode'])
-        adaptado["key"]= int(cancion["key"])
+        adaptado["mode"] = cancion['mode']
+        adaptado["key"]= cancion["key"]
         adaptado["artist_id"]= cancion["artist_id"]
         adaptado["tweet_lang"]= cancion["tweet_lang"]
         adaptado["track_id"] = cancion["track_id"]
