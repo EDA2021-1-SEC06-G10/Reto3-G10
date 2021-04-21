@@ -45,13 +45,13 @@ def loadContent(catalog):
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
-        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
+        adaptado["instrumentalness"]= float(cancion['\ufeff"instrumentalness"']) 
         adaptado["liveness"]= float(cancion["liveness"])
         adaptado["speechiness"]= float(cancion["speechiness"])
         adaptado["danceability"]= float(cancion["danceability"])
         adaptado["valence"]= float(cancion["valence"])        
         adaptado["loudness"]= float(cancion["loudness"])
-        adaptado["liveness"]= float(cancion["liveness"])
+        adaptado["tempo"]= float(cancion["tempo"])
         adaptado["acousticness"]= float(cancion["acousticness"])
         adaptado["energy"]= float(cancion["energy"])
         adaptado["mode"] = int(cancion['mode'])

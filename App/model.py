@@ -105,14 +105,26 @@ def addInstrumentalnessTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeInstrumentalness(mapt, cancion):
+    caracteristica = 'instrumentalness'
     categoria = cancion['\ufeff"instrumentalness"']
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["instrumentalness"]= cancion['\ufeff"instrumentalness"']
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexInstrumentalness(dataentry, cancion)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
     return mapt
 
 def addValueIndexInstrumentalness(dataentry, cancion):
@@ -531,15 +543,16 @@ def newDataEntry(cancion):
 
     return entry
 
-def newArtEntry(caracteristica, artista, crime):
+def newArtEntry(caracteristica, cancion):
     """
     Crea una entrada en el indice por tipo de crimen, es decir en
     la tabla de hash, que se encuentra en cada nodo del arbol.
     """
-    artentry = {'caracteristica': None, 'artista': None , 'canciones': None}
+    artentry = {'caracteristica': None, 'artistas': None , 'canciones': None, "reproducciones":None}
     artentry['caracteristica'] = caracteristica
-    artentry['artista'] = artista
+    artentry['artistas'] = lt.newList('ARRAY_LIST', compareArtistas)
     artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
+    artentry["reproducciones"]= lt.newList('ARRAY_LIST')
     return artentry
 
 # Funciones para creacion de datos
@@ -635,10 +648,13 @@ def compareValues(valor1, valor2):
     else:
         return -1
 
-def compareArtistas(artist1, artist2):
-    result = (artist1 > artist2)
+def compareArtistas(artist1, cancion):
+    result = (artist1 == cancion["artist_id"])
     return result
 
+def compareCanciones(cancion1, cancion):
+    result = (cancion1 == cancion["track_id"])
+    return result
 
 def compareArtist(artist1, artist2):
     """
@@ -652,17 +668,17 @@ def compareArtist(artist1, artist2):
     else:
         return -1
 
-def compareCanciones(cancion1, cancion2):
-    """
-    Compara dos tipos de canciones
-    """
-    cancion = me.getKey(cancion2)
-    if (cancion1 == cancion):
-        return 0
-    elif (cancion1 > cancion):
-        return 1
-    else:
-        return -1
+# def compareCanciones(cancion1, cancion2):
+#     """
+#     Compara dos tipos de canciones
+#     """
+#     cancion = me.getKey(cancion2)
+#     if (cancion1 == cancion):
+#         return 0
+#     elif (cancion1 > cancion):
+#         return 1
+#     else:
+#         return -1
 
 # Funciones de ordenamiento
 
