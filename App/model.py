@@ -127,18 +127,18 @@ def addSongToTreeInstrumentalness(mapt, cancion):
         lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
     return mapt
 
-def addValueIndexInstrumentalness(dataentry, cancion):
-    caracteristica = 'instrumentalness'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
+# def addValueIndexInstrumentalness(dataentry, cancion):
+#     caracteristica = 'instrumentalness'
+#     cancionesInst = dataentry['caracteristica']
+#     artentry = mp.get(cancionesInst, cancion['artist_id'])
+#     if (artentry is None):
+#         entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
+#         lt.addLast(entry['canciones'], cancion['track_id'])
+#         mp.put(cancionesInst, 'información', entry)
+#     else:
+#         entry = me.getValue(artentry)
+#         lt.addLast(entry['canciones'], cancion['track_id'])
+#     return dataentry
 
 # ==========
 # Liveness
