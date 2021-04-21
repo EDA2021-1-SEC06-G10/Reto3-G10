@@ -44,7 +44,27 @@ def loadContent(catalog):
     contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
-        model.addSong(catalog, cancion)
+        adaptado= {}
+        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
+        adaptado["liveness"]= float(cancion["liveness"])
+        adaptado["speechiness"]= float(cancion["speechiness"])
+        adaptado["danceability"]= float(cancion["danceability"])
+        adaptado["valence"]= float(cancion["valence"])        
+        adaptado["loudness"]= float(cancion["loudness"])
+        adaptado["liveness"]= float(cancion["liveness"])
+        adaptado["acousticness"]= float(cancion["acousticness"])
+        adaptado["energy"]= float(cancion["energy"])
+        adaptado["mode"] = int(cancion['mode'])
+        adaptado["key"]= int(cancion["key"])
+        adaptado["artist_id"]= cancion["artist_id"]
+        adaptado["tweet_lang"]= cancion["tweet_lang"]
+        adaptado["track_id"] = cancion["track_id"]
+        adaptado["created_at"]= cancion["created_at"]
+        adaptado["lang"]= cancion["lang"]
+        adaptado["time_zone"]= cancion["time_zone"]
+        adaptado["user_id"]= int(cancion["user_id"])
+        adaptado["id"]= int(cancion["id"])
+        model.addSong(catalog, adaptado)
         
 # Funciones de ordenamiento
 
