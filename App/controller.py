@@ -73,6 +73,9 @@ def loadContent(catalog):
 def indexSizeInstrumentalness(catalog):
     return model.indexSizeInstrumentalness(catalog)
 
+def indexHeightInstrumentalness(catalog):
+    return model.indexHeightInstrumentalness(catalog)
+
 def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     return model.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
 

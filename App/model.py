@@ -568,8 +568,8 @@ def newArtEntry(caracteristica, cancion):
 
 # Funciones de consulta
 
-def indexHeght(catalog):
-    return om.height(catalog['Avance RBT'])
+def indexHeightInstrumentalness(catalog):
+    return om.height(catalog['instrumentalness_RBT'])
 
 def indexSizeInstrumentalness(catalog):
     return om.size(catalog['instrumentalness_RBT'])

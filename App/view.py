@@ -39,10 +39,11 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Música dependiendo de tus gustos: ")
-    print("3- ¡Música para festejar! (Energy y Danceability): ")
-    print("4- Música para estudiar (Instrumentalness y Tempo): ")
-    print("5- Reproducciones según un género musical: ")
-    print("6- Género más escuchado en un rango de horas del día: ")
+    print('3- (LAB-9) Altura y Elementos del árbol ("Instrumentalness").')
+    print("4- ¡Música para festejar! (Energy y Danceability): ") #3
+    print("5- Música para estudiar (Instrumentalness y Tempo): ") #4
+    print("6- Reproducciones según un género musical: ") #5
+    print("7- Género más escuchado en un rango de horas del día: ") #6
     print("0- Salir")
 
 def print_Req1(tamaño, rango_menor, rango_mayor):
@@ -81,7 +82,6 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = initCatalog()
         loadData = controller.loadData(catalog)
-        print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
 
 
     elif int(inputs[0]) == 2:
@@ -93,6 +93,10 @@ while True:
         print_Req1(canciones, rango_menor, rango_mayor)
     
     elif int(inputs[0]) == 3:
+        print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
+        print('Altura del árbol: ' + str(controller.indexHeightInstrumentalness(catalog)))
+
+    elif int(inputs[0]) == 4: #3
         categoria1 = 'energy'
         categoria2 = 'danceability'
         rango_menor1 = 0.6
@@ -106,11 +110,11 @@ while True:
         canciones = controller.consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
         #print_Req2(canciones[0], canciones[1])
 
-    elif int(inputs[0]) == 4:
+    elif int(inputs[0]) == 5: #4
         pass
-    elif int(inputs[0]) == 5:
+    elif int(inputs[0]) == 6: #5
         pass
-    elif int(inputs[0]) == 6:
+    elif int(inputs[0]) == 7: #6
         pass
     else:
         sys.exit(0)
