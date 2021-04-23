@@ -65,6 +65,7 @@ def loadContent(catalog):
         adaptado["user_id"]= int(cancion["user_id"])
         adaptado["id"]= int(cancion["id"])
         model.addSong(catalog, adaptado)
+        #model.addToTrackIdMap(catalog, adaptado)
         
 # Funciones de ordenamiento
 
@@ -79,5 +80,5 @@ def indexHeightInstrumentalness(catalog):
 def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     return model.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
 
-def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
-    return model.consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+def consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
+    return model.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
