@@ -46,7 +46,16 @@ def newCatalog():
     catalog = {'caracteristicas': None, # Tabla de Hash en la que las llaves son
                                         # los nombres de las características y los
                                         # valores son un árbol Rojo-Negro.
-                "Avance RBT": None,     
+                "intrumentalness_RBT": None,
+                'liveness_RBT': None,
+                'speechiness_RBT': None,
+                'danceability_RBT': None,
+                'valence_RBT': None,
+                'loudness_RBT': None,
+                'tempo_RBT': None,
+                'acousticness_RBT': None,
+                'energy_RBT': None,
+  
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
@@ -64,8 +73,6 @@ def newCatalog():
     catalog['tempo_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['acousticness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['energy_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
-    catalog['mode_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
-    catalog['key_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
 
     return catalog
 
@@ -75,16 +82,14 @@ def newCatalog():
 
 def addSong(catalog, cancion):
     addInstrumentalnessTreesToHashTable(catalog, cancion)
-    # addLivenessTreesToHashTable(catalog, cancion)
-    # addSpeechinessTreesToHashTable(catalog, cancion)
-    # addDanceabilityTreesToHashTable(catalog, cancion)
-    # addValenceTreesToHashTable(catalog, cancion)
-    # addLoudnessTreesToHashTable(catalog, cancion)
-    # addTempoTreesToHashTable(catalog, cancion)
-    # addAcousticnessTreesToHashTable(catalog, cancion)
-    # addEnergyTreesToHashTable(catalog, cancion)
-    # addModeTreesToHashTable(catalog, cancion)
-    # addKeyTreesToHashTable(catalog, cancion)
+    addLivenessTreesToHashTable(catalog, cancion)
+    addSpeechinessTreesToHashTable(catalog, cancion)
+    addDanceabilityTreesToHashTable(catalog, cancion)
+    addValenceTreesToHashTable(catalog, cancion)
+    addLoudnessTreesToHashTable(catalog, cancion)
+    addTempoTreesToHashTable(catalog, cancion)
+    addAcousticnessTreesToHashTable(catalog, cancion)
+    addEnergyTreesToHashTable(catalog, cancion)
 
     return catalog
 
@@ -108,12 +113,15 @@ def addSongToTreeInstrumentalness(mapt, cancion):
     caracteristica = 'instrumentalness'
     categoria = cancion["instrumentalness"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {} # Elina, Nicolás, 
+                  # por favor no nos bajen.
+                  # Carlos nos autorizó usar
+                  # este diccionaro.
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -123,23 +131,15 @@ def addSongToTreeInstrumentalness(mapt, cancion):
        
     else:
         dataentry = me.getValue(entry)
-        lt.addLast(dataentry['canciones'], filtrado)
-        lt.addLast(dataentry['artistas'], cancion["artist_id"])
-        lt.addLast(dataentry["reproducciones"], cancion["track_id"] )
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
 
-# def addValueIndexInstrumentalness(dataentry, cancion):
-#     caracteristica = 'instrumentalness'
-#     cancionesInst = dataentry['caracteristica']
-#     artentry = mp.get(cancionesInst, cancion['artist_id'])
-#     if (artentry is None):
-#         entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-#         lt.addLast(entry['canciones'], cancion['track_id'])
-#         mp.put(cancionesInst, 'información', entry)
-#     else:
-#         entry = me.getValue(artentry)
-#         lt.addLast(entry['canciones'], cancion['track_id'])
-#     return dataentry
 
 # ==========
 # Liveness
@@ -157,35 +157,39 @@ def addLivenessTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeLiveness(mapt, cancion):
-    categoria = cancion['liveness']
+    caracteristica = 'liveness'
+    categoria = cancion["liveness"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexLiveness(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexLiveness(dataentry, cancion):
-    caracteristica = 'liveness'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # ============
 # Speechiness
 # ============
 
 def addSpeechinessTreesToHashTable(catalog, cancion):
-    categoria = 'speechiness'
+    categoria = 'ispeechiness'
     tabla = catalog['caracteristicas']
     arbol = catalog['speechiness_RBT']
     entry = mp.get(tabla, categoria)
@@ -196,28 +200,32 @@ def addSpeechinessTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeSpeechiness(mapt, cancion):
-    categoria = cancion['speechiness']
+    caracteristica = 'speechiness'
+    categoria = cancion["speechiness"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexSpeechiness(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexSpeechiness(dataentry, cancion):
-    caracteristica = 'speechiness'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # =============
 # Danceability
@@ -235,28 +243,32 @@ def addDanceabilityTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeDanceability(mapt, cancion):
-    categoria = cancion['danceability']
+    caracteristica = 'danceability'
+    categoria = cancion["danceability"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexDanceabilty(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexDanceabilty(dataentry, cancion):
-    caracteristica = 'danceability'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # ========
 # Valence
@@ -274,28 +286,32 @@ def addValenceTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeValence(mapt, cancion):
-    categoria = cancion['valence']
+    caracteristica = 'valence'
+    categoria = cancion["valence"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexValence(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexValence(dataentry, cancion):
-    caracteristica = 'valence'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # =========
 # Loudness
@@ -313,28 +329,32 @@ def addLoudnessTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeLoudness(mapt, cancion):
-    categoria = cancion['loudness']
+    caracteristica = 'loudness'
+    categoria = cancion["loudness"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexLoudness(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexLoudness(dataentry, cancion):
-    caracteristica = 'loudness'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # ======
 # Tempo
@@ -352,28 +372,35 @@ def addTempoTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeTempo(mapt, cancion):
-    categoria = cancion['tempo']
+    caracteristica = 'tempo'
+    categoria = cancion["tempo"]
     entry = om.get(mapt, categoria)
+    filtrado = {} # Elina, Nicolás, 
+                # por favor no nos bajen.
+                # Carlos nos autorizó usar
+                # este diccionaro.
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexTempo(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexTempo(dataentry, cancion):
-    caracteristica = 'tempo'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # =============
 # Acousticness
@@ -391,28 +418,32 @@ def addAcousticnessTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeAcousticness(mapt, cancion):
-    categoria = cancion['acousticness']
+    caracteristica = 'acousticness'
+    categoria = cancion["acousticness"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexAcousticness(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
-def addValueIndexAcousticness(dataentry, cancion):
-    caracteristica = 'acousticness'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
 
 # =======
 # Energy
@@ -430,213 +461,141 @@ def addEnergyTreesToHashTable(catalog, cancion):
     return tabla
 
 def addSongToTreeEnergy(mapt, cancion):
-    categoria = cancion['energy']
-    entry = om.get(mapt, categoria)
-    if entry is None:
-        dataentry = newDataEntry(cancion)
-        om.put(mapt, categoria, dataentry)
-    else:
-        dataentry = me.getValue(entry)
-    addValueIndexEnergy(dataentry, cancion)
-    return mapt
-
-def addValueIndexEnergy(dataentry, cancion):
     caracteristica = 'energy'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
-
-# =====
-# Mode
-# =====
-
-def addModeTreesToHashTable(catalog, cancion):
-    categoria = 'mode'
-    tabla = catalog['caracteristicas']
-    arbol = catalog['mode_RBT']
-    entry = mp.get(tabla, categoria)
-    if entry is None:
-        mp.put(tabla, categoria, arbol)
-    addSongToTreeMode(arbol, cancion)
-
-    return tabla
-
-def addSongToTreeMode(mapt, cancion):
-    categoria = cancion['mode']
+    categoria = cancion["energy"]
     entry = om.get(mapt, categoria)
+    filtrado={}
+    filtrado["track_id"]=cancion["track_id"]
+    filtrado["instrumentalness"]= cancion["instrumentalness"]
+    filtrado["tempo"]= cancion["tempo"]
+    filtrado["danceability"]= cancion["danceability"]
+    filtrado["energy"]= cancion["energy"]
     if entry is None:
-        dataentry = newDataEntry(cancion)
+        dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
+        lt.addLast(dataentry['canciones'], filtrado)
+        lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+       
     else:
         dataentry = me.getValue(entry)
-    addValueIndexMode(dataentry, cancion)
+        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        if esta_track == 0:
+            lt.addLast(dataentry['canciones'], filtrado)
+        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+        if esta_artista == 0:
+            lt.addLast(dataentry['artistas'], cancion["artist_id"])
+        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
 
-def addValueIndexMode(dataentry, cancion):
-    caracteristica = 'mode'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
-
-# ====
-# Key
-# ====
-
-def addKeyTreesToHashTable(catalog, cancion):
-    categoria = 'key'
-    tabla = catalog['caracteristicas']
-    arbol = catalog['key_RBT']
-    entry = mp.get(tabla, categoria)
-    if entry is None:
-        mp.put(tabla, categoria, arbol)
-    addSongToTreeKey(arbol, cancion)
-
-    return tabla
-
-def addSongToTreeKey(mapt, cancion):
-    categoria = cancion['key']
-    entry = om.get(mapt, categoria)
-    if entry is None:
-        dataentry = newDataEntry(cancion)
-        om.put(mapt, categoria, dataentry)
-    else:
-        dataentry = me.getValue(entry)
-    addValueIndexKey(dataentry, cancion)
-    return mapt
-
-def addValueIndexKey(dataentry, cancion):
-    caracteristica = 'key'
-    cancionesInst = dataentry['caracteristica']
-    artentry = mp.get(cancionesInst, cancion['artist_id'])
-    if (artentry is None):
-        entry = newArtEntry(caracteristica, cancion['artist_id'], cancion)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-        mp.put(cancionesInst, 'información', entry)
-    else:
-        entry = me.getValue(artentry)
-        lt.addLast(entry['canciones'], cancion['track_id'])
-    return dataentry
-
-def newDataEntry(cancion):
-    """
-    Crea una entrada en el indice por fechas, es decir en el arbol
-    binario.
-    """
-    entry = {'caracteristica': None}
-    entry['caracteristica'] = mp.newMap(numelements=10,
-                                          maptype='CHAINING',
-                                          loadfactor=4.0,
-                                          comparefunction=compareArtist)
-
-    return entry
+# Funciones para creacion de datos
 
 def newArtEntry(caracteristica, cancion):
     """
     Crea una entrada en el indice por tipo de crimen, es decir en
     la tabla de hash, que se encuentra en cada nodo del arbol.
     """
-    artentry = {'caracteristica': None, 'artistas': None , 'canciones': None, "reproducciones":None}
+    artentry = {'caracteristica': None, 'artistas': None , 'canciones': None, "reproducciones": None} # Elina, Nicolás, 
+                                                                                                      # por favor no nos bajen.
+                                                                                                      # Carlos nos autorizó usar
+                                                                                                      # este diccionaro.
     artentry['caracteristica'] = caracteristica
     artentry['artistas'] = lt.newList('ARRAY_LIST', compareArtistas)
     artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
     artentry["reproducciones"]= lt.newList('ARRAY_LIST')
     return artentry
 
-# Funciones para creacion de datos
-
 # Funciones de consulta
 
-def indexHeght(catalog):
-    return om.height(catalog['Avance RBT'])
+def indexHeightInstrumentalness(catalog):
+    return om.height(catalog['instrumentalness_RBT'])
 
-def indexSize(catalog):
+def indexSizeInstrumentalness(catalog):
     return om.size(catalog['instrumentalness_RBT'])
 
 def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
-    print(llaves)
     arbol = me.getValue(llaves)
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     total_canciones = 0
     total_artistas = 0
-    lista_artistas = lt.newList('ARRAY_LIST')
     canciones = lt.newList('ARRAY_LIST')
     i = 1
 
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
-        tablaHash = tabla['caracteristica']
-        key_value = mp.get(tablaHash, 'información')
-        value = me.getValue(key_value)
-        lista_canciones = value['canciones']
-        lt.addLast(lista_artistas, value['artista'])
-        lt.addLast(canciones, lista_canciones)
-        artistas_unicos = artistasUnicos(lista_artistas)
-        tamaño_artista = lt.size(artistas_unicos)
-        tamaño_canciones = lt.size(lista_canciones)
-        total_canciones += tamaño_canciones
+        lista_canciones = tabla['reproducciones']
+        lista_artistas = tabla['artistas']
+        lista_reproducciones = tabla['canciones']
+        size_canciones = lt.size(lista_canciones)
+        size_artistas = lt.size(lista_artistas)
+        size_reproducciones = lt.size(lista_reproducciones)
+        total_artistas += size_artistas
+        total_canciones += size_canciones
+        j = 1
+        while j <= size_reproducciones:
+            lista_canciones_unicas = lt.getElement(tabla['canciones'], j)
+            lt.addLast(canciones, lista_canciones_unicas)
+            j += 1
         i += 1
-
-    #print(total_canciones)
+       
     return (total_canciones, total_artistas, canciones)
 
-# def consultaReq2(catalog, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
-#     lista = lt.newList('ARRAY_LIST')
+def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
+
+    lista = lt.newList('ARRAY_LIST', cmpfunction=compareTracksLista)
+    #lista_tracks_unicos = lt.newList('ARRAY_LIST', cmpfunction=compareTracks)
     
-#     tupla_1 = consultaReq1(catalog, 'energy', rango_menor1, rango_mayor1)
-#     total_canciones1 = tupla_1[0]
-#     lista_canciones1 = tupla_1[2]
-#     size1 = lt.size(lista_canciones1)
-#     i = 0
-#     while i < size1:
-#         cancion = lt.getElement(lista_canciones1, i)
-#         lt.addLast(lista, cancion)
-#         i += 1
+    tupla_1 = consultaReq1(catalog, categoria1, rango_menor1, rango_mayor1)
+    total_canciones1 = tupla_1[0]
+    lista_canciones1 = tupla_1[2]
+    size1 = lt.size(lista_canciones1)
+    i = 0
+    while i < size1:
+        cancion = lt.getElement(lista_canciones1, i)
+        track = cancion['track_id']
+        esta_track = lt.isPresent(lista, track)
+        if esta_track == 0:
+            lt.addLast(lista, cancion)
+        # esta_track = lt.isPresent(lista_tracks_unicos, track)
+        # if esta_track == 0:
+        #     lt.addLast(lista_tracks_unicos, track)
+        #lt.addLast(lista, cancion)
+        i += 1
 
-#     print(lista_canciones1)
-#     print('-----')
+    tupla_2 = consultaReq1(catalog, categoria2, rango_menor2, rango_mayor2)
+    total_canciones2 = tupla_2[0]
+    lista_canciones2 = tupla_2[2]
+    size2 = lt.size(lista_canciones2)
+    j = 0
+    while j < size2:
+        cancion = lt.getElement(lista_canciones2, j)
+        track = cancion['track_id']
+        esta_track = lt.isPresent(lista, track)
+        if esta_track == 0:
+            lt.addLast(lista, cancion)
+        # esta_track = lt.isPresent(lista_tracks_unicos, track)
+        # if esta_track == 0:
+        #     lt.addLast(lista_tracks_unicos, track)
+        #lt.addLast(lista, cancion)
+        j += 1
+    
+    size = lt.size(lista)
 
-#     tupla_2 = consultaReq1(catalog, 'danceability', rango_menor2, rango_mayor2)
-#     total_canciones2 = tupla_2[0]
-#     lista_canciones2 = tupla_2[2]
-#     size2 = lt.size(lista_canciones2)
-#     j = 0
-#     while j < size2:
-#         cancion = lt.getElement(lista_canciones2, i)
-#         lt.addLast(lista, cancion)
-#         j += 1
-
-#     print(lista_canciones2)
-#     print(lista)
-
-
+    return (size, lista)
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-def compareArtistIds(musica, artist_id):
-    result = (artist_id == musica['artist_id'])
-    return result
+# def compareArtistIds(musica, artist_id):
+#     result = (artist_id == musica['artist_id'])
+#     return result
 
-def compareTrackIds(musica, track_id):
-    result = (track_id == musica['track_id'])
-    return result
+# def compareTrackIds(musica, track_id):
+#     result = (track_id == musica['track_id'])
+#     return result
 
 def compareValues(valor1, valor2):
     if valor1 > valor2:
@@ -647,24 +606,48 @@ def compareValues(valor1, valor2):
         return -1
 
 def compareArtistas(artist1, cancion):
-    result = (artist1 == cancion["artist_id"])
-    return result
-
-def compareCanciones(cancion1, cancion):
-    result = (cancion1 == cancion["track_id"])
-    return result
-
-def compareArtist(artist1, artist2):
-    """
-    Compara dos tipos de artistas
-    """
-    artist = me.getKey(artist2)
-    if (artist1 == artist):
+    if artist1 == cancion:
         return 0
-    elif (artist1 > artist):
+    elif artist1 > cancion:
         return 1
     else:
         return -1
+
+def compareCanciones(cancion1, cancion):
+    if cancion1 == cancion['track_id']:
+        return 0
+    elif cancion1 > cancion['track_id']:
+        return 1
+    else:
+        return -1
+
+def compareTracks(track1, track2):
+    if track1 == track2:
+        return 0
+    elif track1 > track2:
+        return 1
+    else:
+        return -1
+
+def compareTracksLista(track1, track2):
+    if track1 == track2['track_id']:
+        return 0
+    elif track1 > track2['track_id']:
+        return 1
+    else:
+        return -1
+    
+# def compareArtist(artist1, artist2):
+#     """
+#     Compara dos tipos de artistas
+#     """
+#     artist = me.getKey(artist2)
+#     if (artist1 == artist):
+#         return 0
+#     elif (artist1 > artist):
+#         return 1
+#     else:
+#         return -1
 
 # def compareCanciones(cancion1, cancion2):
 #     """
