@@ -59,8 +59,8 @@ def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_
     size = tupla[0]
     i = 0
     print('\n')
-    print('Entre ' + str(rango_menor1) + ' y ' + str(rango_mayor1) + ' para Energy.')
-    print('Entre ' + str(rango_menor2) + ' y ' + str(rango_mayor2) + ' para Danceability.')
+    print('Entre ' + str(rango_menor1) + ' y ' + str(rango_mayor1) + ' para ' + str(categoria1) + '.')
+    print('Entre ' + str(rango_menor2) + ' y ' + str(rango_mayor2) + ' para ' + str(categoria2) + '.')
     print('Hay un total de: ' + str(tupla[0]) + ' canciones únicas.\n')
     print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
     print('5 canciones random: ')
@@ -68,7 +68,7 @@ def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_
     while i < 5:
         numero = random.randint(0, (size - 1))
         track = lt.getElement(tupla[1], numero)
-        print('Track ' + str(i + 1) + ': ' + str(track['track_id']) + ' con ' + str(track[str(categoria)]) + ' de ' + str(categoria1) + ' y ' + str(track[str(categoria_2)]) + ' de ' + str(categoria2) + '.')
+        print('Track ' + str(i + 1) + ': ' + str(track['track_id']) + ' con ' + str(track[str(categoria_1)]) + ' de ' + str(categoria1) + ' y ' + str(track[str(categoria_2)]) + ' de ' + str(categoria2) + '.')
         i += 1
 
     print('\n')
@@ -101,12 +101,12 @@ while True:
         rango_menor = 0.0 #input('Ingrese el rango menor de valores que quiere ver: ')
         rango_mayor = 0.3 #input('Ingrese el rango mayor de valores que quiere ver: ')
         canciones = controller.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
-        #print_Req1(canciones, rango_menor, rango_mayor)
+        print_Req1(canciones, rango_menor, rango_mayor)
 
     elif int(inputs[0]) == 3:
         categoria1 = 'Energy'
         categoria_1 = categoria1.lower()
-        categoria2 = 'Instrumentalness'
+        categoria2 = 'Danceability'
         categoria_2 = categoria2.lower()
         rango_menor1 = 0.6
         rango_mayor1 = 1
@@ -117,7 +117,7 @@ while True:
         #rango_menor2 = input('Ingrese el rango menor de Danceability: ')
         #rango_mayor2 = input('Ingrese el rango mayor de Danceability: ')
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
-        #print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 4:
         categoria1 = 'Instrumentalness'
@@ -133,7 +133,7 @@ while True:
         #rango_menor2 = input('Ingrese el rango menor de Tempo: ')
         #rango_mayor2 = input('Ingrese el rango mayor de Tempo: ')
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
-        #print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 5:
         pass

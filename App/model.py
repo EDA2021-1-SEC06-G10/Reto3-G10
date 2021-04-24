@@ -1,4 +1,4 @@
-﻿﻿"""
+﻿"""
  * Copyright 2020, Departamento de sistemas y Computación,
  * Universidad de Los Andes
  *
@@ -55,10 +55,7 @@ def newCatalog():
                 'tempo_RBT': None,
                 'acousticness_RBT': None,
                 'energy_RBT': None,
-                'mode_RBT': None,
-                'key_RBT': None,  
-
-                'tracks': None   
+  
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
@@ -76,8 +73,6 @@ def newCatalog():
     catalog['tempo_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['acousticness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['energy_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
-    catalog['mode_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
-    catalog['key_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
 
     return catalog
 
@@ -95,8 +90,6 @@ def addSong(catalog, cancion):
     addTempoTreesToHashTable(catalog, cancion)
     addAcousticnessTreesToHashTable(catalog, cancion)
     addEnergyTreesToHashTable(catalog, cancion)
-    addModeTreesToHashTable(catalog, cancion)
-    addKeyTreesToHashTable(catalog, cancion)
 
     return catalog
 
