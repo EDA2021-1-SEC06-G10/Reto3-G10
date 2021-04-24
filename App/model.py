@@ -32,7 +32,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import mergesort as mer
 from DISClib.ADT import orderedmap as om
-import datetime
+from datetime import datetime 
 assert cf
 
 """
@@ -725,3 +725,17 @@ def cancionesUnicas(lista):
 
     sub_list = None
     return sorted_list
+
+def horamilitar(stringAM):
+    if "AM" in stringAM:
+        stringAM = stringAM[:len(stringAM)-3]
+    elif "PM" in stringAM:
+        stringAM = stringAM[:len(stringAM)-3]
+        if stringAM[1]==":":
+            reemplazo= int(stringAM[0])+12
+            stringAM[0]= str(reemplazo)
+            print(stringAM)
+        elif stringAM[2]==":":
+            reemplazo= int(stringAM[0:2])+12
+            stringAM[0]= str(reemplazo)+ stringAM[2:]
+    return stringAM

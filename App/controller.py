@@ -23,6 +23,8 @@
 import config as cf
 import model
 import csv
+from datetime import datetime
+
 
 
 """
@@ -59,13 +61,24 @@ def loadContent(catalog):
         adaptado["artist_id"]= cancion["artist_id"]
         adaptado["tweet_lang"]= cancion["tweet_lang"]
         adaptado["track_id"] = cancion["track_id"]
-        adaptado["created_at"]= cancion["created_at"]
+        date_string = cancion["created_at"][11:]
+        date_string1= model.horamilitar(date_string)
+        #print(date_string1)
+        adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
         adaptado["lang"]= cancion["lang"]
         adaptado["time_zone"]= cancion["time_zone"]
         adaptado["user_id"]= int(cancion["user_id"])
         adaptado["id"]= int(cancion["id"])
         model.addSong(catalog, adaptado)
-        
+
+def loadHashtagdata(catalog):
+    contentfile= cf.data_dir + 'sentiment_values.csv'
+    input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
+    for hashtag in input_file:
+        filtro={}
+        filtro["hashtag"]= hashtag['hashtag']
+        filtro["vader_avg"]= hashtag["vader_avg"]
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
