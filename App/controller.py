@@ -65,7 +65,7 @@ def loadContent(catalog):
         adaptado["user_id"]= int(cancion["user_id"])
         adaptado["id"]= int(cancion["id"])
         model.addSong(catalog, adaptado)
-        #model.addToTrackIdMap(catalog, adaptado)
+        model.addTrackToMap(catalog, adaptado)
         
 # Funciones de ordenamiento
 

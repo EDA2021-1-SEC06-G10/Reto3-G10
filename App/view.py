@@ -101,12 +101,12 @@ while True:
         rango_menor = 0.0 #input('Ingrese el rango menor de valores que quiere ver: ')
         rango_mayor = 0.3 #input('Ingrese el rango mayor de valores que quiere ver: ')
         canciones = controller.consultaReq1(catalog, categoria, rango_menor, rango_mayor)
-        print_Req1(canciones, rango_menor, rango_mayor)
+        #print_Req1(canciones, rango_menor, rango_mayor)
 
     elif int(inputs[0]) == 3:
         categoria1 = 'Energy'
         categoria_1 = categoria1.lower()
-        categoria2 = 'Danceability'
+        categoria2 = 'Instrumentalness'
         categoria_2 = categoria2.lower()
         rango_menor1 = 0.6
         rango_mayor1 = 1
@@ -117,7 +117,7 @@ while True:
         #rango_menor2 = input('Ingrese el rango menor de Danceability: ')
         #rango_mayor2 = input('Ingrese el rango mayor de Danceability: ')
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
-        print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        #print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 4:
         categoria1 = 'Instrumentalness'
@@ -133,7 +133,7 @@ while True:
         #rango_menor2 = input('Ingrese el rango menor de Tempo: ')
         #rango_mayor2 = input('Ingrese el rango mayor de Tempo: ')
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
-        print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        #print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 5:
         pass
