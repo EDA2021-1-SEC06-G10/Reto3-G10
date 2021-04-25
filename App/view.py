@@ -26,7 +26,7 @@ import controller
 from DISClib.ADT import list as lt
 import random
 assert cf
-
+import time
 
 """
 La vista se encarga de la interacción con el usuario
@@ -49,11 +49,11 @@ def print_Req1(tamaño, rango_menor, rango_mayor):
     if tamaño == -1:
         print('La categoría ingresada no existe en el archivo cargado.')
     else:
-        print('\n')
+        print('*')*50
         print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' han habido: ' + str(tamaño[0]) + ' canciones.')
         print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' hay ' + str(tamaño[1]) + ' artistas.')
         #print('Un tímido: ' + str(tamaño[2]))
-        print('\n')
+        print('*')*50
 
 def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
     size = tupla[0]
@@ -70,14 +70,26 @@ def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_
         track = lt.getElement(tupla[1], numero)
         print('Track ' + str(i + 1) + ': ' + str(track['track_id']) + ' con ' + str(track[str(categoria_1)]) + ' de ' + str(categoria1) + ' y ' + str(track[str(categoria_2)]) + ' de ' + str(categoria2) + '.')
         i += 1
-
     print('\n')
+
+def print_Req4(tupla, genero, rango):
+    print(("-"*10)+ genero + ("-"*10)+" BPM")
+    print("Para " + genero+ " el tempo esta entre: " +str(rango[0])+ " y " + str(rango[1]))
+    print("Las reproducciones de "+ genero + " son: " + str(tupla[1]))
+    print('Algunos artistas son: ')
+    print('\n')
+    i=1
+    while i<=10:
+        artista= lt.getElement(tupla[2],i)
+        print("Artista #" +str(i)+ ": " +artista )
+        i+=1
 
 def initCatalog():
     return controller.initCatalog()
 
 def loadData(catalog):
     controller.loadData(catalog)
+    controller.loadRangos(catalog)
 
 catalog = None
 
@@ -89,11 +101,14 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        t1 = time.process_time_ns()
         catalog = initCatalog()
-        loadData = controller.loadData(catalog)
+        controller.loadData(catalog)
+        t2 = time.process_time_ns()
+        print("El tiempo transcurrido fue: "+ str(t2-t1))
         print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
         print('Altura del árbol: ' + str(controller.indexHeightInstrumentalness(catalog)))
-
+        
 
     elif int(inputs[0]) == 2:
         categoria = 'instrumentalness'#input('Ingrese la categoría de la que quiere ver información: ')
@@ -136,7 +151,23 @@ while True:
         print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 5:
-        pass
+        generos=int(input("Ingrese la cantidad de generos que desea consultar (max 3): "))
+        i=1
+        while i<= generos:
+            print("Genero #"+ str(i))
+            creacion=bool(int(input("Si desea consultar un genero desconocido, digite 1. De lo contrario, digite 0: "))) 
+            if creacion== True:
+                rangotemp_sup= int(input("Ingrese el valor superior del tempo del genero desconocido: "))
+                rangotemp_inf= int(input("Ingrese el valor inferior del tempo del genero desconocido: "))
+            else:
+                generoX=input("Ingrese el genero que desea consultar: ")
+                generoX=generoX.lower()
+                resultado=controller.consultaReq4(catalog, generoX)
+                rango= resultado[3]
+                print_Req4(resultado[:3], generoX, rango)
+            print("\n")
+            i+=1
+        
     elif int(inputs[0]) == 6:
         pass
     else:

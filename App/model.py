@@ -63,6 +63,10 @@ def newCatalog():
                                            loadfactor=4.0,
                                            #comparefunction=compareKeys                                              
                                           )
+    catalog['generos'] = mp.newMap(9,
+                                  maptype='CHAINING',
+                                  loadfactor=4.0,
+                                  comparefunction=compareGenre)
     
     catalog['instrumentalness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['liveness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
@@ -90,9 +94,62 @@ def addSong(catalog, cancion):
     addTempoTreesToHashTable(catalog, cancion)
     addAcousticnessTreesToHashTable(catalog, cancion)
     addEnergyTreesToHashTable(catalog, cancion)
-
+    lista = findGenre(catalog, cancion)
+    addToGenre(catalog, lista, cancion)
+    lista = None
     return catalog
 
+
+
+def findGenre(catalog, cancion):
+    lista=[]
+    if (cancion["tempo"]>= 60) and (cancion['tempo']<= 90):
+        lista.append("reggae")
+    if (cancion["tempo"]>= 70) and (cancion['tempo']<= 100):
+        lista.append("down-tempo")
+    if (cancion["tempo"]>= 90) and (cancion['tempo']<= 120):
+        lista.append("chill-out")
+    if (cancion["tempo"]>= 85) and (cancion['tempo']<= 115):
+        lista.append("hip-hop")
+    if (cancion["tempo"]>= 120) and (cancion['tempo']<= 125):
+        lista.append("jazz and funk")
+    if (cancion["tempo"]>= 100) and (cancion['tempo']<= 130):
+        lista.append("pop")
+    if (cancion["tempo"]>=60) and (cancion['tempo']<= 80):
+        lista.append("r&b")
+    if (cancion["tempo"]>= 110) and (cancion['tempo']<= 140):
+        lista.append("rock")
+    if (cancion["tempo"]>= 100) and (cancion['tempo']<= 160):
+        lista.append("metal")    
+    return lista
+
+def addToGenre(catalog, lista, cancion):
+    try:
+
+        generos = catalog['generos']
+        for llave in lista:
+        
+            existeGen = mp.contains(generos, llave)
+            if existeGen:
+                entry = mp.get(generos, llave)
+                gen = me.getValue(entry)
+            else:
+                gen = newGen(llave)
+                mp.put(generos, llave, gen)
+            
+            mp.put(gen['artistas'], cancion["artist_id"],None)
+            gen['reproducciones']+=1
+    except Exception:
+        return None
+
+
+def newGen(genero):
+    entry= {'artistas': None, "reproducciones":0}
+    entry['artistas']= mp.newMap(3000,
+                                  maptype='CHAINING',
+                                  loadfactor=4.0,
+                                  comparefunction=compareArtistid)
+    return entry
 
 # ================
 # Intrumentalness
@@ -587,11 +644,48 @@ def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, ra
 
     return (size, lista)
 
+def consultaReq4(catalog, genero):
+    key_value = mp.get(catalog['generos'], genero)
+    value = me.getValue(key_value)
+    artistas = mp.keySet(value["artistas"])
+    cantArt= lt.size(artistas)
+    reproducciones= value["reproducciones"]
+    rango= Rangos(genero)
+    return cantArt, reproducciones, artistas, rango
+
+def Rangos(genero):
+    rango= 0
+    if genero== "reggae":
+        rango=(60,90)
+    elif genero== "down-tempo":
+        rango=(70,100)
+    elif genero== "chill-out":
+            rango=(90,120)
+    elif genero== "hip-hop":
+            rango=(85,115)
+    elif genero== "jazz and funk":
+            rango=(120, 125)
+    elif genero== "pop":
+            rango=(100, 130)
+    elif genero== "r&b":
+        rango=(60, 80)
+    elif genero== "rock":
+        rango=(110, 140)
+    elif genero == "metal":
+        rango=(100, 160)
+    return rango
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-# def compareArtistIds(musica, artist_id):
-#     result = (artist_id == musica['artist_id'])
-#     return result
+def compareArtistid(Id, entry):
+    """
+    """
+    identry= me.getKey(entry)
+    if Id == identry:
+        return 0
+    elif Id > identry:
+        return 1
+    else:
+        return -1
 
 # def compareTrackIds(musica, track_id):
 #     result = (track_id == musica['track_id'])
@@ -633,6 +727,17 @@ def compareTracksLista(track1, track2):
     if track1 == track2['track_id']:
         return 0
     elif track1 > track2['track_id']:
+        return 1
+    else:
+        return -1
+
+def compareGenre(Id, entry):
+    """
+    """
+    identry= me.getKey(entry)
+    if Id == identry:
+        return 0
+    elif Id > identry:
         return 1
     else:
         return -1

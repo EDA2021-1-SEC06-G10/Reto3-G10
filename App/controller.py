@@ -43,11 +43,11 @@ def loadData(catalog):
     loadContent(catalog)
 
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
+    contentfile = cf.data_dir + 'context_content_features-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
-        adaptado["instrumentalness"]= float(cancion['\ufeff"instrumentalness"']) 
+        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
         adaptado["liveness"]= float(cancion["liveness"])
         adaptado["speechiness"]= float(cancion["speechiness"])
         adaptado["danceability"]= float(cancion["danceability"])
@@ -56,20 +56,17 @@ def loadContent(catalog):
         adaptado["tempo"]= float(cancion["tempo"])
         adaptado["acousticness"]= float(cancion["acousticness"])
         adaptado["energy"]= float(cancion["energy"])
-        adaptado["mode"] = cancion['mode']
-        adaptado["key"]= cancion["key"]
         adaptado["artist_id"]= cancion["artist_id"]
-        adaptado["tweet_lang"]= cancion["tweet_lang"]
         adaptado["track_id"] = cancion["track_id"]
         date_string = cancion["created_at"][11:]
         date_string1= model.horamilitar(date_string)
-        #print(date_string1)
         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
-        adaptado["lang"]= cancion["lang"]
-        adaptado["time_zone"]= cancion["time_zone"]
         adaptado["user_id"]= int(cancion["user_id"])
-        adaptado["id"]= int(cancion["id"])
+        #adaptado["id"]= int(cancion["id"])
         model.addSong(catalog, adaptado)
+    
+def loadRangos(catalog):
+    return model.loadRangos(catalog)
 
 def loadHashtagdata(catalog):
     contentfile= cf.data_dir + 'sentiment_values.csv'
@@ -94,3 +91,7 @@ def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
 
 def consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
     return model.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+
+def consultaReq4(catalog, genero):
+    return model.consultaReq4(catalog,genero)
+
