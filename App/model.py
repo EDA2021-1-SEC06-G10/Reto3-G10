@@ -99,7 +99,9 @@ def addSong(catalog, cancion):
     lista = None
     return catalog
 
-
+# =================
+# Para los géneros
+# =================
 
 def findGenre(catalog, cancion):
     lista=[]
@@ -196,7 +198,6 @@ def addSongToTreeInstrumentalness(mapt, cancion):
             lt.addLast(dataentry['artistas'], cancion["artist_id"])
         lt.addLast(dataentry["reproducciones"], cancion["track_id"])
     return mapt
-
 
 # ==========
 # Liveness
@@ -570,79 +571,109 @@ def indexHeightInstrumentalness(catalog):
 def indexSizeInstrumentalness(catalog):
     return om.size(catalog['instrumentalness_RBT'])
 
-def consultaReq1(catalog, categoria, rango_menor, rango_mayor):
+def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
     arbol = me.getValue(llaves)
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
-    total_canciones = 0
+    total_reproducciones = 0
     total_artistas = 0
-    canciones = lt.newList('ARRAY_LIST')
+    mapaArtistas = mp.newMap(22, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
 
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
-        lista_canciones = tabla['reproducciones']
+
+        lista_reproducciones = tabla['reproducciones']
         lista_artistas = tabla['artistas']
-        lista_reproducciones = tabla['canciones']
-        size_canciones = lt.size(lista_canciones)
-        size_artistas = lt.size(lista_artistas)
-        size_reproducciones = lt.size(lista_reproducciones)
-        total_artistas += size_artistas
-        total_canciones += size_canciones
+        size_lista_artistas = lt.size(lista_artistas)
+
         j = 1
-        while j <= size_reproducciones:
-            lista_canciones_unicas = lt.getElement(tabla['canciones'], j)
-            lt.addLast(canciones, lista_canciones_unicas)
+        while j <= size_lista_artistas:
+            elemento = lt.getElement(lista_artistas, j)
+            mp.put(mapaArtistas, elemento, None)
             j += 1
+        
+        artistas_unicos = mp.keySet(mapaArtistas)
+        total_artistas = lt.size(artistas_unicos)
+
+        size_reproducciones = lt.size(lista_reproducciones)
+        total_reproducciones += size_reproducciones
+
         i += 1
-       
-    return (total_canciones, total_artistas, canciones)
+
+    return (total_reproducciones, total_artistas)
+
+def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
+    total_tamaño = 0
+    hashTabla = catalog['caracteristicas']
+    llaves = mp.get(hashTabla, categoria)
+    arbol = me.getValue(llaves)
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    total_reproducciones = 0
+    total_canciones = lt.newList('ARRAY_LIST')
+    i = 1
+
+    while i <= tamaño_tabla:
+        tabla = lt.getElement(valores, i)
+
+        lista_reproducciones = tabla['reproducciones']
+        lista_canciones = tabla['canciones']
+        size_lista_canciones = lt.size(lista_canciones)
+
+        size_reproducciones = lt.size(lista_reproducciones)
+        total_reproducciones += size_reproducciones
+
+        j = 1
+        while j <= size_lista_canciones:
+            lista_canciones_unicas = lt.getElement(tabla['canciones'], j)
+            lt.addLast(total_canciones, lista_canciones_unicas)
+            j += 1
+
+        i += 1
+    
+    #print(total_canciones)
+    return (total_reproducciones, total_canciones)
 
 def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
 
-    lista = lt.newList('ARRAY_LIST', cmpfunction=compareTracksLista)
-    #lista_tracks_unicos = lt.newList('ARRAY_LIST', cmpfunction=compareTracks)
-    
-    tupla_1 = consultaReq1(catalog, categoria1, rango_menor1, rango_mayor1)
-    total_canciones1 = tupla_1[0]
-    lista_canciones1 = tupla_1[2]
+    lista_canciones_unicas = lt.newList('ARRAY_LIST', cmpfunction=compareTracksLista)
+
+    tupla_1 = consultaCanciones(catalog, categoria1, rango_menor1, rango_mayor1)
+    lista_canciones1 = tupla_1[1]
     size1 = lt.size(lista_canciones1)
-    i = 0
-    while i < size1:
+    i = 1
+    while i <= size1:
         cancion = lt.getElement(lista_canciones1, i)
         track = cancion['track_id']
-        esta_track = lt.isPresent(lista, track)
+        esta_track = lt.isPresent(lista_canciones_unicas, track)
         if esta_track == 0:
-            lt.addLast(lista, cancion)
-        # esta_track = lt.isPresent(lista_tracks_unicos, track)
-        # if esta_track == 0:
-        #     lt.addLast(lista_tracks_unicos, track)
-        #lt.addLast(lista, cancion)
+            if (cancion[categoria2] > rango_menor2) and (cancion[categoria2] < rango_mayor2):
+                lt.addLast(lista_canciones_unicas, cancion)
+
         i += 1
 
-    tupla_2 = consultaReq1(catalog, categoria2, rango_menor2, rango_mayor2)
-    total_canciones2 = tupla_2[0]
-    lista_canciones2 = tupla_2[2]
+    tupla_2 = consultaCanciones(catalog, categoria2, rango_menor2, rango_mayor2)
+    lista_canciones2 = tupla_2[1]
     size2 = lt.size(lista_canciones2)
-    j = 0
-    while j < size2:
+    j = 1
+    while j <= size2:
         cancion = lt.getElement(lista_canciones2, j)
         track = cancion['track_id']
-        esta_track = lt.isPresent(lista, track)
+        esta_track = lt.isPresent(lista_canciones_unicas, track)
         if esta_track == 0:
-            lt.addLast(lista, cancion)
-        # esta_track = lt.isPresent(lista_tracks_unicos, track)
-        # if esta_track == 0:
-        #     lt.addLast(lista_tracks_unicos, track)
-        #lt.addLast(lista, cancion)
+            if (cancion[categoria1] > rango_menor1) and (cancion[categoria1] < rango_mayor1):
+                lt.addLast(lista_canciones_unicas, cancion)
+
         j += 1
     
-    size = lt.size(lista)
+    #print(lista_canciones_unicas)
+    size = lt.size(lista_canciones_unicas)
 
-    return (size, lista)
+    return (size, lista_canciones_unicas)
 
 def consultaReq4(catalog, genero):
     key_value = mp.get(catalog['generos'], genero)
@@ -674,6 +705,7 @@ def Rangos(genero):
     elif genero == "metal":
         rango=(100, 160)
     return rango
+
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def compareArtistid(Id, entry):
