@@ -61,20 +61,18 @@ def loadContent(catalog):
         date_string = cancion["created_at"][11:]
         date_string1= model.horamilitar(date_string)
         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
-        adaptado["user_id"]= int(cancion["user_id"])
-        #adaptado["id"]= int(cancion["id"])
         model.addSong(catalog, adaptado)
     
-def loadRangos(catalog):
-    return model.loadRangos(catalog)
+ 
 
 def loadHashtagdata(catalog):
     contentfile= cf.data_dir + 'sentiment_values.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for hashtag in input_file:
         filtro={}
-        filtro["hashtag"]= hashtag['hashtag']
-        filtro["vader_avg"]= hashtag["vader_avg"]
+        if hashtag["vader_avg"] != "":
+            filtro["hashtag"]= hashtag['hashtag']
+            filtro["vader_avg"]= hashtag["vader_avg"]
 
 # Funciones de ordenamiento
 

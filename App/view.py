@@ -89,7 +89,6 @@ def initCatalog():
 
 def loadData(catalog):
     controller.loadData(catalog)
-    #controller.loadRangos(catalog)
 
 catalog = None
 
@@ -113,8 +112,8 @@ while True:
     elif int(inputs[0]) == 2:
         categoria = 'instrumentalness'#input('Ingrese la categoría de la que quiere ver información: ')
         categoria = categoria.lower()
-        rango_menor = 0.0 #input('Ingrese el rango menor de valores que quiere ver: ')
-        rango_mayor = 0.3 #input('Ingrese el rango mayor de valores que quiere ver: ')
+        rango_menor = 0.75 #input('Ingrese el rango menor de valores que quiere ver: ')
+        rango_mayor = 1.00 #input('Ingrese el rango mayor de valores que quiere ver: ')
         canciones = controller.consultaArtistas(catalog, categoria, rango_menor, rango_mayor)
         print_Req1(canciones, categoria, rango_menor, rango_mayor)
 

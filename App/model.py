@@ -55,7 +55,8 @@ def newCatalog():
                 'tempo_RBT': None,
                 'acousticness_RBT': None,
                 'energy_RBT': None,
-  
+                'date_RBT':None,
+                'info_VADER':None
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
@@ -64,6 +65,10 @@ def newCatalog():
                                            #comparefunction=compareKeys                                              
                                           )
     catalog['generos'] = mp.newMap(9,
+                                  maptype='CHAINING',
+                                  loadfactor=4.0,
+                                  comparefunction=compareGenre)
+    catalog['info_VADER'] = mp.newMap(2500,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
                                   comparefunction=compareGenre)
@@ -77,7 +82,7 @@ def newCatalog():
     catalog['tempo_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['acousticness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     catalog['energy_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
-
+    catalog['date_RBT'] =  om.newMap(omaptype='RBT', comparefunction=compareValues)
     return catalog
 
 
@@ -96,6 +101,7 @@ def addSong(catalog, cancion):
     addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
     addToGenre(catalog, lista, cancion)
+    addDateTree(catalog,cancion, lista)
     lista = None
     return catalog
 
@@ -153,6 +159,59 @@ def newGen(genero):
                                   comparefunction=compareArtistid)
     return entry
 
+def newGen2(genero):
+
+    entry= {'canciones': None, "reproducciones":0}
+    entry['canciones']= mp.newMap(3000,
+                                  maptype='CHAINING',
+                                  loadfactor=4.0,
+                                  comparefunction=compareArtistid)
+    return entry
+
+# ================
+# Organizacion por fechas
+# ================
+
+def addDateTree(catalog, cancion, lista):
+    fecha = cancion["created_at"]
+    arbol= catalog['date_RBT']
+    entry= om.get(arbol, fecha)
+    if entry is None:
+        dataentry=newGenEntry(cancion)
+        om.put(arbol, fecha, dataentry)
+        
+    else:
+        dataentry=me.getValue(entry)
+    dataentry["fechaRepr"]+=1
+    addGenre2(dataentry,lista,cancion)    
+    return arbol
+
+def newGenEntry(cancion):
+    generosFecha={"fechaRepr": 0, "generos": None}
+    generosFecha['generos']= mp.newMap(9,
+                                  maptype='CHAINING',
+                                  loadfactor=4.0,
+                                  comparefunction=compareGenre)
+    return generosFecha
+
+def addGenre2(dataentry, lista, cancion):
+    try:
+        generos = dataentry['generos']
+        for llave in lista:
+        
+            existeGen = mp.contains(generos, llave)
+            if existeGen:
+                entry = mp.get(generos, llave)
+                gen = me.getValue(entry)
+            else:
+                gen = newGen2(llave)
+                mp.put(generos, llave, gen)
+            
+            mp.put(gen['canciones'], cancion["track_id"],None)
+            gen['reproducciones']+=1
+    except Exception:
+        return None
+    
 # ================
 # Intrumentalness
 # ================
@@ -549,10 +608,6 @@ def addSongToTreeEnergy(mapt, cancion):
 # Funciones para creacion de datos
 
 def newArtEntry(caracteristica, cancion):
-    """
-    Crea una entrada en el indice por tipo de crimen, es decir en
-    la tabla de hash, que se encuentra en cada nodo del arbol.
-    """
     artentry = {'caracteristica': None, 'artistas': None , 'canciones': None, "reproducciones": None} # Elina, Nicolás, 
                                                                                                       # por favor no nos bajen.
                                                                                                       # Carlos nos autorizó usar
@@ -858,4 +913,6 @@ def horamilitar(stringAM):
         elif stringAM[2]==":":
             reemplazo= int(stringAM[0:2])+12
             stringAM[0]= str(reemplazo)+ stringAM[2:]
+    stringAM= stringAM[:len(stringAM)-2]
+    stringAM = stringAM+"00"
     return stringAM
