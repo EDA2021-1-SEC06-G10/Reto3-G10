@@ -661,6 +661,7 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     tamaño_tabla = lt.size(valores)
     total_reproducciones = 0
     total_artistas = 0
+    artistas_unicos = None
     mapaArtistas = mp.newMap(22, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
 
@@ -685,7 +686,7 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
 
         i += 1
 
-    return (total_reproducciones, total_artistas)
+    return (total_artistas, total_reproducciones, artistas_unicos)
 
 def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
