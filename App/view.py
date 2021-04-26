@@ -51,8 +51,8 @@ def print_Req1(tamaño, categoria, rango_menor, rango_mayor):
     else:
         print('*' * 50)
         print('Para la caracerística ' + str(categoria) + ':')
-        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' han habido: ' + str(tamaño[0]) + ' canciones.')
-        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' hay ' + str(tamaño[1]) + ' artistas.')
+        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' han habido: ' + str(tamaño[1]) + ' canciones.')
+        print('En el rango de ' + str(rango_menor) + ' a ' + str(rango_mayor) + ' hay ' + str(tamaño[0]) + ' artistas.')
         print('*' * 50)
 
 def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
@@ -80,7 +80,7 @@ def print_Req4(tupla, genero, rango):
     print('\n')
     i = 1
     while i <= 10:
-        artista = lt.getElement(tupla[2],i)
+        artista = lt.getElement(tupla[2], i)
         print("Artista #" + str(i) + ": " + artista )
         i += 1
 
@@ -100,20 +100,19 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-        t1 = time.process_time_ns()
         catalog = initCatalog()
-        controller.loadData(catalog)
-        t2 = time.process_time_ns()
-        print("El tiempo transcurrido fue: " + str(t2-t1))
+        answer = controller.loadData(catalog)
+        print("Tiempo [ms]: ", f"{answer[0]:.3f}", "  ||  ",
+              "Memoria [kB]: ", f"{answer[1]:.3f}")
         print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
         print('Altura del árbol: ' + str(controller.indexHeightInstrumentalness(catalog)))
         
 
     elif int(inputs[0]) == 2:
-        categoria = 'instrumentalness'#input('Ingrese la categoría de la que quiere ver información: ')
+        categoria = input('Ingrese la categoría de la que quiere ver información: ')
         categoria = categoria.lower()
-        rango_menor = 0.75 #input('Ingrese el rango menor de valores que quiere ver: ')
-        rango_mayor = 1.00 #input('Ingrese el rango mayor de valores que quiere ver: ')
+        rango_menor = float(input('Ingrese el rango menor de valores que quiere ver: '))
+        rango_mayor = float(input('Ingrese el rango mayor de valores que quiere ver: '))
         canciones = controller.consultaArtistas(catalog, categoria, rango_menor, rango_mayor)
         print_Req1(canciones, categoria, rango_menor, rango_mayor)
 
@@ -122,16 +121,17 @@ while True:
         categoria_1 = categoria1.lower()
         categoria2 = 'Danceability'
         categoria_2 = categoria2.lower()
-        rango_menor1 = 0.6
-        rango_mayor1 = 1
-        rango_menor2 = 0.6
-        rango_mayor2 = 1
-        #rango_menor1 = input('Ingrese el rango menor de Energy: ')
-        #rango_mayor1 = input('Ingrese el rango mayor de Energy: ')
-        #rango_menor2 = input('Ingrese el rango menor de Danceability: ')
-        #rango_mayor2 = input('Ingrese el rango mayor de Danceability: ')
+        # rango_menor1 = 0.6
+        # rango_mayor1 = 1
+        # rango_menor2 = 0.6
+        # rango_mayor2 = 1
+        rango_menor1 = float(input('Ingrese el rango menor de Energy: '))
+        rango_mayor1 = float(input('Ingrese el rango mayor de Energy: '))
+        rango_menor2 = float(input('Ingrese el rango menor de Danceability: '))
+        rango_mayor2 = float(input('Ingrese el rango mayor de Danceability: '))
         #lista_canciones = controller.consultaCanciones(catalog, categoria_2, rango_menor2, rango_mayor2)
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        print('Tiempo [ms]: ' + str(canciones[1]) + ' || ' + 'Memoria: ' + str(canciones[2]) + '.')
         print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 4:
@@ -139,15 +139,16 @@ while True:
         categoria_1 = categoria1.lower()
         categoria2 = 'Tempo'
         categoria_2 = categoria2.lower()
-        rango_menor1 = 0.0
-        rango_mayor1 = 0.3
-        rango_menor2 = 90
-        rango_mayor2 = 120
-        #rango_menor1 = input('Ingrese el rango menor de Instrumentalness: ')
-        #rango_mayor1 = input('Ingrese el rango mayor de Instrumentalness: ')
-        #rango_menor2 = input('Ingrese el rango menor de Tempo: ')
-        #rango_mayor2 = input('Ingrese el rango mayor de Tempo: ')
+        # rango_menor1 = 0.0
+        # rango_mayor1 = 0.3
+        # rango_menor2 = 90
+        # rango_mayor2 = 120
+        rango_menor1 = float(input('Ingrese el rango menor de Instrumentalness: '))
+        rango_mayor1 = float(input('Ingrese el rango mayor de Instrumentalness: '))
+        rango_menor2 = float(input('Ingrese el rango menor de Tempo: '))
+        rango_mayor2 = float(input('Ingrese el rango mayor de Tempo: '))
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        print('Tiempo [ms]: ' + str(canciones[1]) + ' || ' + 'Memoria: ' + str(canciones[2]) + '.')
         print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
     elif int(inputs[0]) == 5:
@@ -159,6 +160,10 @@ while True:
             if creacion == True:
                 rangotemp_sup = int(input("Ingrese el valor superior del tempo del genero desconocido: "))
                 rangotemp_inf = int(input("Ingrese el valor inferior del tempo del genero desconocido: "))
+                rango = (rangotemp_inf, rangotemp_sup)
+                result = controller.consultaArtistas(catalog, 'tempo', rangotemp_inf, rangotemp_sup)
+                print(result[2])
+                #print_Req4(result, 'desconocido', rango)
             else:
                 generoX = input("Ingrese el genero que desea consultar: ")
                 generoX = generoX.lower()

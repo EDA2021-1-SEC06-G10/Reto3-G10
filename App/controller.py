@@ -24,6 +24,8 @@ import config as cf
 import model
 import csv
 from datetime import datetime
+import time
+import tracemalloc
 
 
 
@@ -40,14 +42,30 @@ def initCatalog():
 # Funciones para la carga de datos
 
 def loadData(catalog):
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    tracemalloc.start()
+    start_time = getTime()
+    start_memory = getMemory()
+
     loadContent(catalog)
 
+    stop_memory = getMemory()
+    stop_time = getTime()
+    tracemalloc.stop()
+
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    return delta_time, delta_memory
+
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-small.csv'
+    contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
-        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
+        adaptado["instrumentalness"]= float(cancion['\ufeff"instrumentalness"']) 
         adaptado["liveness"]= float(cancion["liveness"])
         adaptado["speechiness"]= float(cancion["speechiness"])
         adaptado["danceability"]= float(cancion["danceability"])
@@ -85,14 +103,123 @@ def indexHeightInstrumentalness(catalog):
     return model.indexHeightInstrumentalness(catalog)
 
 def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
-    return model.consultaArtistas(catalog, categoria, rango_menor, rango_mayor)
+    artistas = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+   
+    artistas = model.consultaArtistas(catalog, categoria, rango_menor, rango_mayor)
+
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (artistas)
 
 def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
     return model.consultaCanciones(catalog, categoria, rango_menor, rango_mayor)
 
 def consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
-    return model.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+    consulta = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+
+    consulta = model.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (consulta)
 
 def consultaReq4(catalog, genero):
-    return model.consultaReq4(catalog,genero)
+    consulta = None
+    delta_time = -1.0
+    delta_memory = -1.0
 
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+
+    consulta = model.consultaReq4(catalog, genero)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (consulta)
+
+# ==========================================
+# Funciones para medir el tiempo y memoria
+# ==========================================
+
+def getTime():
+    """
+    Devuelve el instante de tiempo de procesamiento en milisegundos
+    """
+    return float(time.perf_counter() * 1000)
+
+def getMemory():
+    """
+    Toma una muestra de la memoria alocada en el instante de tiempo
+    """
+    return tracemalloc.take_snapshot()
+
+def deltaMemory(start_memory, stop_memory):
+    """
+    Calcula la diferencia en memoria alocada del programa entre dos
+    instantes de tiempo y devuelve el resultado en bytes (ej.: 2100.0 B)
+    """
+    memory_diff = stop_memory.compare_to(start_memory, "filename")
+    delta_memory = 0.0
+
+    # suma de las diferencias en uso de memoria
+    for stat in memory_diff:
+        delta_memory = delta_memory + stat.size_diff
+    
+    # de Byte -> kByte
+    delta_memory = delta_memory/1024.0
+    return delta_memory
