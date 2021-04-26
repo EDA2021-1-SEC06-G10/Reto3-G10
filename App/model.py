@@ -100,9 +100,11 @@ def addSong(catalog, cancion):
     addAcousticnessTreesToHashTable(catalog, cancion)
     addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
+    lista2 = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
     addToGenre(catalog, lista, cancion)
     addDateTree(catalog,cancion, lista)
-    lista = None
+    addHTinfo(catalog, lista2, cancion)
+    lista.clear()
     return catalog
 
 # =================
@@ -167,6 +169,30 @@ def newGen2(genero):
                                   loadfactor=4.0,
                                   comparefunction=compareArtistid)
     return entry
+
+# ================
+# Meter hashtags por fechas
+# ================
+
+def addHTinfo(catalog, lista, cancion):
+    arbol= catalog['date_RBT']
+    fecha= cancion["created_at"]
+    entry= om.get(arbol, fecha)
+    tabla_Gen=me.getValue(entry)
+    llenado(tablaGen,lista,cancion)
+    return arbol
+
+def llenado(tablaGen, lista, cancion):
+    for llave in lista:
+        existeGen = mp.contains(generos, llave)
+        if existeGen:
+            entry = mp.get(generos, llave)
+            gen = me.getValue(entry)
+            asociarHTcancion(entry,cancion) 
+    return tablaGen
+
+def asociar(entry, cancion):
+    return
 
 # ================
 # Organizacion por fechas

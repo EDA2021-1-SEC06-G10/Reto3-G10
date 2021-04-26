@@ -84,6 +84,9 @@ def print_Req4(tupla, genero, rango):
         print("Artista #" + str(i) + ": " + artista )
         i += 1
 
+def print_Req5():
+    pass
+
 def initCatalog():
     return controller.initCatalog()
 

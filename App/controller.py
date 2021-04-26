@@ -62,8 +62,18 @@ def loadContent(catalog):
         date_string1= model.horamilitar(date_string)
         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
         model.addSong(catalog, adaptado)
-    
- 
+       
+def loadHashtagToSong(catalog):   
+    contentfile = cf.data_dir + 'context_content_features-small.csv'
+    input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
+    for cancion in input_file:
+        adaptado={}
+        date_string = cancion["created_at"][11:]
+        date_string1= model.horamilitar(date_string)
+        adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
+        adaptado["track_id"] = cancion["track_id"]
+        adaptado['hashtag'] = cancion['hashtag']
+        model.addHTinfo(catalog, adaptado)
 
 def loadHashtagdata(catalog):
     contentfile= cf.data_dir + 'sentiment_values.csv'
