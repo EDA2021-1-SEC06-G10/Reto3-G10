@@ -73,16 +73,16 @@ def newCatalog():
                                   loadfactor=0.5,
                                   comparefunction=compareGenre)
     
-    catalog['instrumentalness_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['liveness_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['speechiness_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['danceability_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['valence_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['loudness_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['tempo_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['acousticness_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['energy_RBT'] = om.newMap(omaptype='BST', comparefunction=compareValues)
-    catalog['date_RBT'] =  om.newMap(omaptype='BST', comparefunction=compareValues)
+    catalog['instrumentalness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['liveness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['speechiness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['danceability_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['valence_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['loudness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['tempo_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['acousticness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['energy_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    catalog['date_RBT'] =  om.newMap(omaptype='RBT', comparefunction=compareValues)
     return catalog
 
 
