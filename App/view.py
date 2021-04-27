@@ -84,7 +84,7 @@ def print_Req4(tupla, genero, rango):
         print("Artista #" + str(i) + ": " + artista )
         i += 1
 
-def print_Req5(resultao):
+def print_Req5(resultado):
     pass
 
 def initCatalog():
