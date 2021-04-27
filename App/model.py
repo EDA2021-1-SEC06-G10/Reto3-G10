@@ -100,13 +100,15 @@ def addSong(catalog, cancion):
     addAcousticnessTreesToHashTable(catalog, cancion)
     addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
-    lista2 = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
-    addToGenre(catalog, lista, cancion)
     addDateTree(catalog,cancion, lista)
-    addHTinfo(catalog, lista2, cancion)
+    addToGenre(catalog, lista, cancion)
     lista.clear()
     return catalog
 
+def addHT(catalog, cancion):
+    lista = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
+    addHTinfo(catalog, lista, cancion)
+    lista.clear()
 # =================
 # Para los géneros
 # =================
@@ -179,20 +181,31 @@ def addHTinfo(catalog, lista, cancion):
     fecha= cancion["created_at"]
     entry= om.get(arbol, fecha)
     tabla_Gen=me.getValue(entry)
-    llenado(tablaGen,lista,cancion)
+    llenado(tabla_Gen['generos'],lista,cancion)
     return arbol
 
 def llenado(tablaGen, lista, cancion):
     for llave in lista:
-        existeGen = mp.contains(generos, llave)
+        existeGen = mp.contains(tablaGen, llave)
         if existeGen:
-            entry = mp.get(generos, llave)
+            entry = mp.get(tablaGen, llave)
             gen = me.getValue(entry)
-            asociarHTcancion(entry,cancion) 
+            mp.put(gen['canciones'],cancion["track_id"],cancion["hashtag"]) 
     return tablaGen
 
-def asociar(entry, cancion):
-    return
+
+# ================
+# Hash para Vaders
+# ================
+
+def addVader(catalog, hashtag):
+    hashtags= catalog["info_VADER"]
+    llave= hashtag['hashtag']
+    existeHT=  mp.contains(hashtags, llave)
+    if existeHT:
+        pass
+    else:
+        mp.put(hashtags, llave, hashtag["vader_avg"])
 
 # ================
 # Organizacion por fechas
