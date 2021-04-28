@@ -73,8 +73,8 @@ def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_
     print('+' * 50 + '\n')
 
 def print_Req4(tupla, genero, rango):
-    print(("-" * 10) + genero + ("-" * 10) + " BPM")
-    print("Para " + genero + " el tempo esta entre: " + str(rango[0]) + " y " + str(rango[1]))
+    print(("-" * 10) + genero + ("-" * 10))
+    print("Para " + genero + " el tempo esta entre: " + str(rango[0]) + " y " + str(rango[1])+ " BPM")
     print("Las reproducciones de "+ genero + " son: " + str(tupla[1]))
     print('Algunos artistas son: ')
     print('\n')
