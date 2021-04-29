@@ -62,7 +62,7 @@ def loadData(catalog):
     return delta_time, delta_memory
 
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-small - Copy (2).csv'
+    contentfile = cf.data_dir + 'context_content_features-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
@@ -83,7 +83,7 @@ def loadContent(catalog):
         model.addSong(catalog, adaptado)
        
 def loadHashtagToSong(catalog):   
-    contentfile = cf.data_dir + 'user_track_hashtag_timestamp-small - Copy.csv'
+    contentfile = cf.data_dir + 'user_track_hashtag_timestamp-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado={}
