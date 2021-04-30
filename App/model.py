@@ -196,7 +196,9 @@ def llenado(tablaGen, lista, cancion):
                 mp.put(gen['canciones'], cancion["track_id"], lista_hashtags)
                 lt.addLast(lista_hashtags, cancion["hashtag"])
             else:
-                lt.addLast(lista_hashtags, cancion["hashtag"]) 
+                entrada= mp.get(gen['canciones'], cancion["track_id"])
+                val_entrada= me.getValue(entrada)
+                lt.addLast(val_entrada, cancion["hashtag"]) 
     return tablaGen
 
 # ================
