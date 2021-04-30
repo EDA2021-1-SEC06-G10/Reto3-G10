@@ -27,6 +27,7 @@ from DISClib.ADT import list as lt
 import random
 assert cf
 import time
+from datetime import datetime
 
 """
 La vista se encarga de la interacción con el usuario
