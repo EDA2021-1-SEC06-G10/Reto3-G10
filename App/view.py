@@ -132,7 +132,7 @@ while True:
         rango_mayor1 = float(input('Ingrese el rango mayor de Energy: '))
         rango_menor2 = float(input('Ingrese el rango menor de Danceability: '))
         rango_mayor2 = float(input('Ingrese el rango mayor de Danceability: '))
-        #lista_canciones = controller.consultaCanciones(catalog, categoria_2, rango_menor2, rango_mayor2)
+
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
         print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
 
