@@ -895,31 +895,6 @@ def compareGenre(Id, entry):
 
 # Funciones de ordenamiento
 
-def artistasUnicos(lista):
-    size = lt.size(lista)
-    sub_list = lt.subList(lista,0,size)
-    sub_list = sub_list.copy()
-    sorted_list = mer.sort(sub_list, compareArtistas)
-    print(sorted_list)
-    size_sorted_list = lt.size(sorted_list)
-    i = 0
-    while i < size_sorted_list:
-        if i != size_sorted_list:
-            artista1 = lt.getElement(sorted_list, i)
-            artista2 = lt.getElement(sorted_list, i + 1)
-          
-            if (artista1 == artista2):
-                lt.deleteElement(sorted_list, i)
-            i += 1
-        else:
-            if i == size_sorted_list:
-                break
-
-    sub_list = None
-    return sorted_list
-
-
-
 def horamilitar(stringAM):
     if "AM" in stringAM:
         stringAM = stringAM[:len(stringAM)-3]
