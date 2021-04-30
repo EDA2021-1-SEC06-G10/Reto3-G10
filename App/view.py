@@ -84,8 +84,32 @@ def print_Req4(tupla, genero, rango):
         print("Artista #" + str(i) + ": " + artista )
         i += 1
 
-def print_Req5(resultado):
-    pass
+def print_Req5_1(lista, reproducciones, rango_menor, rango_mayor):
+    print('Hay un total de ' + str(reproducciones) + ' reproducciones entre las ' + str(rango_menor) + ' y ' + str(rango_mayor) + '\n')
+    print('=' * 25 + ' TOP DE GÉNEROS ' + '=' * 25 + '\n')
+    print('(NOTA: Tenga en cuenta que una canción puede pertenecer a diferentes\ngéneros por el tempo que tiene.)\n')
+
+    size_lista = lt.size(lista[1])
+    i = 1
+    while i <= size_lista:
+        elemento = lt.getElement(lista[1], i)
+        print('TOP ' + str(i) + ': ' + str(elemento['key']) + ' con ' + str(elemento['value']) + ' reproducciones.')
+        i += 1
+
+def print_Req5_2(lista1, lista2):
+    top = lt.getElement(lista1[1], 1)
+    print('El GÉNERO TOP es ' + str(top['key']) + ' con ' + str(top['value']) + '.')
+    print('=' * 25 + ' ' + str(top['key']) + ' ANÁLISIS ' + '=' * 25)
+    print(str(top['key']) + ' tiene ') # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
+    print('Las primeras 10 canciones son: ')
+    
+    # size_lista2 = lt.size(lista2)
+    # i = 1
+    # while i <= size_lista2:
+    #     elemento = lt.getElement(lista2, i)
+    #     if i <= 10:
+    #         print('TOP ' + str(i) + ': ' + str(elemento['key']) + ' con ' + str(elemento['value'][0]) + ' hashtags y VADER promedio de: ' + str(elemento['value'][1]))
+    #     i += 1
 
 def initCatalog():
     return controller.initCatalog()
@@ -175,7 +199,17 @@ while True:
             i += 1
         
     elif int(inputs[0]) == 6:
-        pass
+        genero = ''
+        rango_menor_str = '08:00:00'
+        rango_menor = datetime.strptime(rango_menor_str, "%H:%M:%S")
+        rango_mayor_str = '08:30:00'
+        rango_mayor = datetime.strptime(rango_mayor_str, "%H:%M:%S")
+        reproducciones = controller.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
+        lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
+        ordenada = controller.sortByHashTags(lista)
+        canciones = None
+        print_Req5_1(ordenada, reproducciones, rango_menor, rango_mayor)
+        print_Req5_2(ordenada, canciones)
     else:
         sys.exit(0)
 sys.exit(0)

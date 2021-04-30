@@ -181,27 +181,32 @@ def addHTinfo(catalog, lista, cancion):
     fecha= cancion["created_at"]
     entry= om.get(arbol, fecha)
     tabla_Gen=me.getValue(entry)
-    llenado(tabla_Gen['generos'],lista,cancion)
+    llenado(tabla_Gen['generos'], lista, cancion)
     return arbol
 
 def llenado(tablaGen, lista, cancion):
+    lista_hashtags = lt.newList('ARRAY_LIST')
     for llave in lista:
         existeGen = mp.contains(tablaGen, llave)
         if existeGen:
             entry = mp.get(tablaGen, llave)
             gen = me.getValue(entry)
-            mp.put(gen['canciones'],cancion["track_id"],cancion["hashtag"]) 
+            esta_cancion = mp.contains(gen['canciones'], cancion['track_id'])
+            if esta_cancion == False:
+                mp.put(gen['canciones'], cancion["track_id"], lista_hashtags)
+                lt.addLast(lista_hashtags, cancion["hashtag"])
+            else:
+                lt.addLast(lista_hashtags, cancion["hashtag"]) 
     return tablaGen
-
 
 # ================
 # Hash para Vaders
 # ================
 
 def addVader(catalog, hashtag):
-    hashtags= catalog["info_VADER"]
-    llave= hashtag['hashtag']
-    existeHT=  mp.contains(hashtags, llave)
+    hashtags = catalog["info_VADER"]
+    llave = hashtag['hashtag']
+    existeHT =  mp.contains(hashtags, llave)
     if existeHT:
         pass
     else:
@@ -657,13 +662,19 @@ def newArtEntry(caracteristica, cancion):
     artentry["reproducciones"]= lt.newList('ARRAY_LIST')
     return artentry
 
+# ======================
 # Funciones de consulta
+# ======================
 
 def indexHeightInstrumentalness(catalog):
     return om.height(catalog['instrumentalness_RBT'])
 
 def indexSizeInstrumentalness(catalog):
     return om.size(catalog['instrumentalness_RBT'])
+
+    # ==================================
+    # Funciones para el Requerimiento 1
+    # ==================================
 
 def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
@@ -700,6 +711,10 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
         i += 1
 
     return (total_artistas, total_reproducciones, artistas_unicos)
+
+    # ========================================
+    # Funciones para los Requerimientos 2 y 3
+    # ========================================
 
 def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
     total_tamaño = 0
@@ -770,6 +785,10 @@ def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, ra
 
     return (size, lista_canciones_unicas)
 
+    # ===================================
+    # Funciones para el Requerimiento 4
+    # ===================================
+
 def consultaReq4(catalog, genero):
     key_value = mp.get(catalog['generos'], genero)
     value = me.getValue(key_value)
@@ -801,7 +820,167 @@ def Rangos(genero):
         rango=(100, 160)
     return rango
 
+    # ==================================
+    # Funciones para el Requerimiento 5
+    # ==================================
+
+        # ========
+        # Parte 1
+        # ========
+
+def reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor):
+    total_tamaño = 0
+    arbol = catalog['date_RBT']
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    total_reproducciones = 0
+    i = 1
+
+    while i <= tamaño_tabla:
+        diccionario = lt.getElement(valores, i)
+        reproducciones = diccionario['fechaRepr']
+        total_reproducciones += reproducciones
+        i += 1
+    
+    return total_reproducciones
+
+def crearListaGeneros(catalog, rango_menor, rango_mayor):
+    total_tamaño = 0
+    arbol = catalog['date_RBT']
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    total_reproducciones = 0
+    lista_generos = lt.newList('ARRAY_LIST')
+
+    i = 1
+    while i <= tamaño_tabla:
+        diccionario = lt.getElement(valores, i)
+        tablaGeneros = diccionario['generos']
+        generos = mp.keySet(tablaGeneros)
+        size_generos = lt.size(generos)
+        j = 1
+        while j <= size_generos:
+            elemento = lt.getElement(generos, j)
+            esta_genero = lt.isPresent(lista_generos, elemento)
+            if esta_genero == 0:
+                lt.addLast(lista_generos, elemento)
+            j += 1
+        
+        i += 1
+
+    return lista_generos
+    
+def consultaGenero(catalog, rango_menor, rango_mayor):
+    
+    total_tamaño = 0
+    arbol = catalog['date_RBT']
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    total_reproducciones = 0
+    generos = mp.newMap(9, maptype='CHAINING', loadfactor=4.0)
+
+    i = 1
+    while i <= tamaño_tabla:
+        diccionario = lt.getElement(valores, i)
+        tablaGeneros = diccionario['generos']
+        diferentes_generos = crearListaGeneros(catalog, rango_menor, rango_mayor) # mp.keySet(tablaGeneros)
+        tamaño_diferentes_generos = lt.size(diferentes_generos)
+        j = 1
+        while j <= tamaño_diferentes_generos:
+            genero = lt.getElement(diferentes_generos, j)
+            elemento = mp.get(tablaGeneros, genero)
+            if elemento != None:
+                valor = me.getValue(elemento)
+                reproducciones = valor['reproducciones']
+                total_reproducciones = reproducciones
+                mp.put(generos, genero, total_reproducciones)
+
+            j += 1
+        
+        i += 1
+
+    return generos
+
+def consultaTopGeneros(catalog, rango_menor, rango_mayor):
+    generos = consultaGenero(catalog, rango_menor, rango_mayor)
+    lista = lt.newList('ARRAY_LIST')
+    llaves = mp.keySet(generos)
+    size_llaves = lt.size(llaves)
+    k = 1
+    while k <= size_llaves:
+        elemento = lt.getElement(llaves, k)
+        pareja = mp.get(generos, elemento)
+        lt.addLast(lista, pareja)
+        k += 1
+
+    return lista
+
+        # ========
+        # Parte 2
+        # ========
+
+def crearMapaTracks(catalog, rango_menor, rango_mayor):
+    lista = consultaTopGeneros(catalog, rango_menor, rango_mayor)
+    top_genero = lt.getElement(lista, 1)
+    arbol = catalog['date_RBT']
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    cancionesUnicas = mp.newMap(3000, maptype='CHAINIG', loadfactor=4.0, comparefunction=compareArtistid)
+    lista_hashtags = lt.newList('ARRAR_LIST')
+    i = 0
+    while i <= tamaño_tabla:
+        diccionario = lt.getElement(valores, i)
+        tablaGeneros = diccionario['generos']
+        diccionario_2 = mp.get(tablaGeneros, top_genero)
+        tablaCanciones = diccionario_2['canciones']
+        llaves = mp.keySet(tablaCanciones)
+        size_llaves = lt.size(llaves)
+        j = 1
+        while j <= size_llaves:
+            elemento = lt.getElement(llaves, j)
+            pareja = mp.get(tablaCanciones, elemento)
+            llave = me.getKey(pareja)
+            valor = me.getValue(pareja)
+            j += 1
+
+        i += 1
+
+    total = mp.keySet(cancionesUnicas)
+    total_canciones_unicas = lt.size(total)
+    return (cancionesUnicas, total_canciones_unicas)
+
+def darthVaderPorUnaCancion(tabla, cancion_id, rango_menor, rango_mayor):
+    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
+    pareja = mp.get(tablaCanciones[0], cancion_id)
+    valor = me.getValue(pareja)
+    size_hashtags = lt.size(valor)
+    
+    tablaHashtags = catalog['info_VADER']
+    
+    total_vader = 0
+
+    i = 0
+    while i <= size_hashtags:
+        elemento = lt.getElement(valor, i)
+        pareja = mp.get(tablaHashtags, elemento)
+        vader_avg = me.getValue(pareja)
+        total_vader += vader_avg
+    
+    vader_promedio = total_vader / size_hashtags
+
+    tupla = (size_hashtags, vader_promedio)
+
+    return tupla
+
+def vaderPromedioParaCadaCancion(tabla, cancion_id, rango_menor, rango_mayor):
+    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
+    i = 1
+    return      
+
+
+# =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
+# =================================================================
 
 def compareArtistid(Id, entry):
     """
@@ -893,7 +1072,20 @@ def compareGenre(Id, entry):
 #     else:
 #         return -1
 
+# ==========================
 # Funciones de ordenamiento
+# ==========================
+
+def sortByHashTags(lista):
+    size = lt.size(lista)
+    sub_list = lt.subList(lista, 0, size)
+    sub_list = sub_list.copy()
+    t1 = time.process_time()
+    sorted_list = qui.sort(sub_list, compareHashtags)
+    t2 = time.process_time()
+    tiempo_ms = (t2-t1)*1000
+    sub_list = None
+    return (tiempo_ms, sorted_list)
 
 def horamilitar(stringAM):
     if "AM" in stringAM:

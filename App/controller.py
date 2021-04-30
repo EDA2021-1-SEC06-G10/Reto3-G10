@@ -106,6 +106,9 @@ def loadHashtagdata(catalog):
 
 # Funciones de ordenamiento
 
+def sortByHashTags(lista):
+    return model.sortByHashTags(lista)
+
 # Funciones de consulta sobre el catálogo
 
 def indexSizeInstrumentalness(catalog):
@@ -203,6 +206,18 @@ def consultaReq4(catalog, genero):
     print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
 
     return (consulta)
+
+def reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor):
+    return model.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
+
+def consultaGenero(catalog, rango_menor, rango_mayor):
+    return model.consultaGenero(catalog, rango_menor, rango_mayor)
+
+def consultaTopGeneros(catalog, rango_menor, rango_mayor):
+    return model.consultaTopGeneros(catalog, rango_menor, rango_mayor)
+
+def crearListaGeneros(catalog, rango_menor, rango_mayor):
+    return model.crearListaGeneros(catalog, rango_menor, rango_mayor)
 
 # ==========================================
 # Funciones para medir el tiempo y memoria
