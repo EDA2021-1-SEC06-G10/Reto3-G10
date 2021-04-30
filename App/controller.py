@@ -109,6 +109,9 @@ def loadHashtagdata(catalog):
 def sortByHashTags(lista):
     return model.sortByHashTags(lista)
 
+def sortByNumberOfReproductions(lista):
+    return model.sortByNumberOfReproductions(lista)
+
 # Funciones de consulta sobre el catálogo
 
 def indexSizeInstrumentalness(catalog):
@@ -218,6 +221,9 @@ def consultaTopGeneros(catalog, rango_menor, rango_mayor):
 
 def crearListaGeneros(catalog, rango_menor, rango_mayor):
     return model.crearListaGeneros(catalog, rango_menor, rango_mayor)
+
+def topCancionesPorGenero(catalog, rango_menor, rango_mayor):
+    return model.topCancionesPorGenero(catalog, rango_menor, rango_mayor)
 
 # ==========================================
 # Funciones para medir el tiempo y memoria

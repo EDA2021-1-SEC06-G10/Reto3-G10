@@ -213,9 +213,9 @@ def addVader(catalog, hashtag):
     else:
         mp.put(hashtags, llave, hashtag["vader_avg"])
 
-# ================
+# ========================
 # Organizacion por fechas
-# ================
+# ========================
 
 def addDateTree(catalog, cancion, lista):
     fecha = cancion["created_at"]
@@ -927,7 +927,6 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     cancionesUnicas = mp.newMap(3000, maptype='CHAINIG', loadfactor=4.0, comparefunction=compareArtistid)
-    lista_hashtags = lt.newList('ARRAR_LIST')
     i = 0
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
@@ -942,6 +941,8 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
             pareja = mp.get(tablaCanciones, elemento)
             llave = me.getKey(pareja)
             valor = me.getValue(pareja)
+            lista_hashtags = hacerPequeñaLista(valor)
+            mp.put(cancionesUnicas, llave, lista_hashtags)
             j += 1
 
         i += 1
@@ -950,7 +951,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     total_canciones_unicas = lt.size(total)
     return (cancionesUnicas, total_canciones_unicas)
 
-def darthVaderPorUnaCancion(tabla, cancion_id, rango_menor, rango_mayor):
+def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor):
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
@@ -973,11 +974,32 @@ def darthVaderPorUnaCancion(tabla, cancion_id, rango_menor, rango_mayor):
 
     return tupla
 
-def vaderPromedioParaCadaCancion(tabla, cancion_id, rango_menor, rango_mayor):
+def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
+    llaves = mp.keySet(tablaCanciones)
+    size_llaves = lt.size(llaves)
+    nueva_hash = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
-    return      
+    while i <= size_llaves:
+        elemento = lt.getElement(llaves, i)
+        tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor)
+        mp.put(nueva_hash, elemento, tupla)
 
+    return nueva_hash      
+
+def topCancionesPorGenero(catalog, rango_menor, rango_mayor):
+    tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor)
+    lista = lt.newList('ARRAY_LIST')
+    llaves = mp.keySet(tablaGeneros)
+    size_llaves = lt.size(llaves)
+    i = 1
+    while i <= size_llaves:
+        elemento = lt.getElement(llaves, i)
+        pareja = mp.get(tablaGeneros, elemento)
+        lt.addLast(lista, pareja)
+        i += 1
+
+    return lista
 
 # =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -1048,6 +1070,14 @@ def compareGenre(Id, entry):
         return 1
     else:
         return -1
+
+def compareByHashtags(hash1, hash2):
+    result = hash1['value'][0] > hash2['value'][0]
+    return result
+
+def compareHashtags(hashtag1, hashtag2):
+    result = hashtag1['value'] > hashtag2['value']
+    return result    
     
 # def compareArtist(artist1, artist2):
 #     """
@@ -1076,6 +1106,17 @@ def compareGenre(Id, entry):
 # ==========================
 # Funciones de ordenamiento
 # ==========================
+
+def sortByNumberOfReproductions(lista):
+    size = lt.size(lista)
+    sub_list = lt.subList(lista, 0, size)
+    sub_list = sub_list.copy()
+    t1 = time.process_time()
+    sorted_list = qui.sort(sub_list, compareByHashtags)
+    t2 = time.process_time()
+    tiempo_ms = (t2-t1)*1000
+    sub_list = None
+    return (tiempo_ms, sorted_list)    
 
 def sortByHashTags(lista):
     size = lt.size(lista)
