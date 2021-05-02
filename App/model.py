@@ -26,11 +26,13 @@
 
 
 import config as cf
+import time
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import mergesort as mer
+from DISClib.Algorithms.Sorting import quicksort as qui
 from DISClib.ADT import orderedmap as om
 from datetime import datetime 
 assert cf
@@ -166,7 +168,7 @@ def newGen(genero):
 
 def newGen2(genero):
 
-    entry= {'canciones': None, "reproducciones":0}
+    entry= {'canciones': None, "reproducciones":1}
     entry['canciones']= mp.newMap(3000,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
@@ -940,7 +942,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
-        diccionario_2 = mp.get(tablaGeneros, top_genero)
+        diccionario_2 = mp.get(tablaGeneros, top_genero['key'])
         tablaCanciones = diccionario_2['canciones']
         llaves = mp.keySet(tablaCanciones)
         size_llaves = lt.size(llaves)
@@ -952,12 +954,12 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
             valor = me.getValue(pareja)
             esta = mp.contains(cancionesUnicas, llave)
             if esta == False:
-                hacerPequeñaLista(valor, lista_hashtags)
+                #hacerPequeñaLista(valor, lista_hashtags)
                 mp.put(cancionesUnicas, llave, lista_hashtags)
             else:
                 pareja = mp.get(cancionesUnicas, llave)
                 valor2 = me.getValue(pareja)
-                hacerPequeñaLista(valor, valor2)
+                #hacerPequeñaLista(valor, valor2)
                 mp.put(cancionesUnicas, llave, valor2)
             j += 1
 
