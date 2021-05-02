@@ -109,6 +109,7 @@ def addHT(catalog, cancion):
     lista = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
     addHTinfo(catalog, lista, cancion)
     lista.clear()
+    
 # =================
 # Para los géneros
 # =================
@@ -920,6 +921,13 @@ def consultaTopGeneros(catalog, rango_menor, rango_mayor):
         # Parte 2
         # ========
 
+def crearPequeñaLista(lista_vieja, lista_nueva):
+    size = lt.size(lista_vieja)
+    i = 1
+    while i <= size:
+        elemento = lt.getElement(lista_vieja, i)
+        lt.addLast(lista_nueva, elemento)
+
 def crearMapaTracks(catalog, rango_menor, rango_mayor):
     lista = consultaTopGeneros(catalog, rango_menor, rango_mayor)
     top_genero = lt.getElement(lista, 1)
@@ -927,6 +935,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     cancionesUnicas = mp.newMap(3000, maptype='CHAINIG', loadfactor=4.0, comparefunction=compareArtistid)
+    lista_hashtags = lt.newList('ARRAY_LIST')
     i = 0
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
@@ -941,8 +950,15 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
             pareja = mp.get(tablaCanciones, elemento)
             llave = me.getKey(pareja)
             valor = me.getValue(pareja)
-            lista_hashtags = hacerPequeñaLista(valor)
-            mp.put(cancionesUnicas, llave, lista_hashtags)
+            esta = mp.contains(cancionesUnicas, llave)
+            if esta == False:
+                hacerPequeñaLista(valor, lista_hashtags)
+                mp.put(cancionesUnicas, llave, lista_hashtags)
+            else:
+                pareja = mp.get(cancionesUnicas, llave)
+                valor2 = me.getValue(pareja)
+                hacerPequeñaLista(valor, valor2)
+                mp.put(cancionesUnicas, llave, valor2)
             j += 1
 
         i += 1
