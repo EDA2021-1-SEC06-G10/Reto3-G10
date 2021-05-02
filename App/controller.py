@@ -50,8 +50,8 @@ def loadData(catalog):
     start_memory = getMemory()
 
     loadContent(catalog)
-    loadHashtagToSong(catalog)
-    loadHashtagdata(catalog)
+    #loadHashtagToSong(catalog)
+    #loadHashtagdata(catalog)
     stop_memory = getMemory()
     stop_time = getTime()
     tracemalloc.stop()
@@ -62,11 +62,11 @@ def loadData(catalog):
     return delta_time, delta_memory
 
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-small.csv'
+    contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
-        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
+        adaptado["instrumentalness"]= float(cancion['\ufeff"instrumentalness"']) 
         adaptado["liveness"]= float(cancion["liveness"])
         adaptado["speechiness"]= float(cancion["speechiness"])
         adaptado["danceability"]= float(cancion["danceability"])
@@ -82,27 +82,27 @@ def loadContent(catalog):
         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
         model.addSong(catalog, adaptado)
        
-def loadHashtagToSong(catalog):   
-    contentfile = cf.data_dir + 'user_track_hashtag_timestamp-small.csv'
-    input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
-    for cancion in input_file:
-        adaptado={}
-        date_string = cancion["created_at"][11:]
-        date_string1= model.horamilitar(date_string)
-        adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
-        adaptado["track_id"]= cancion["track_id"]
-        adaptado['hashtag']= cancion['hashtag'].lower()
-        model.addHT(catalog, adaptado)
+# def loadHashtagToSong(catalog):   
+#     contentfile = cf.data_dir + 'user_track_hashtag_timestamp-small.csv'
+#     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
+#     for cancion in input_file:
+#         adaptado={}
+#         date_string = cancion["created_at"][11:]
+#         date_string1= model.horamilitar(date_string)
+#         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
+#         adaptado["track_id"]= cancion["track_id"]
+#         adaptado['hashtag']= cancion['hashtag'].lower()
+#         model.addHT(catalog, adaptado)
 
-def loadHashtagdata(catalog):
-    contentfile= cf.data_dir + 'sentiment_values.csv'
-    input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
-    for hashtag in input_file:
-        filtro={}
-        if hashtag["vader_avg"] != "":
-            filtro["hashtag"]= hashtag['hashtag']
-            filtro["vader_avg"]= hashtag["vader_avg"]
-            model.addVader(catalog, hashtag)
+# def loadHashtagdata(catalog):
+#     contentfile= cf.data_dir + 'sentiment_values.csv'
+#     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
+#     for hashtag in input_file:
+#         filtro={}
+#         if hashtag["vader_avg"] != "":
+#             filtro["hashtag"]= hashtag['hashtag']
+#             filtro["vader_avg"]= hashtag["vader_avg"]
+#             model.addVader(catalog, hashtag)
 
 # Funciones de ordenamiento
 

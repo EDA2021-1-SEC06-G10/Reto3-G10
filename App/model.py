@@ -35,6 +35,7 @@ from DISClib.Algorithms.Sorting import mergesort as mer
 from DISClib.Algorithms.Sorting import quicksort as qui
 from DISClib.ADT import orderedmap as om
 from datetime import datetime 
+import time
 assert cf
 
 """
@@ -929,6 +930,7 @@ def crearPequeñaLista(lista_vieja, lista_nueva):
     while i <= size:
         elemento = lt.getElement(lista_vieja, i)
         lt.addLast(lista_nueva, elemento)
+    return lista_nueva
 
 def crearMapaTracks(catalog, rango_menor, rango_mayor):
     lista = consultaTopGeneros(catalog, rango_menor, rango_mayor)
@@ -943,24 +945,25 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
         diccionario_2 = mp.get(tablaGeneros, top_genero['key'])
-        tablaCanciones = diccionario_2['canciones']
-        llaves = mp.keySet(tablaCanciones)
-        size_llaves = lt.size(llaves)
-        j = 1
-        while j <= size_llaves:
-            elemento = lt.getElement(llaves, j)
-            pareja = mp.get(tablaCanciones, elemento)
-            llave = me.getKey(pareja)
-            valor = me.getValue(pareja)
-            esta = mp.contains(cancionesUnicas, llave)
-            if esta == False:
-                #hacerPequeñaLista(valor, lista_hashtags)
-                mp.put(cancionesUnicas, llave, lista_hashtags)
-            else:
-                pareja = mp.get(cancionesUnicas, llave)
-                valor2 = me.getValue(pareja)
-                #hacerPequeñaLista(valor, valor2)
-                mp.put(cancionesUnicas, llave, valor2)
+        if diccionario_2 != None:
+            tablaCanciones = diccionario_2['value']['canciones']
+            llaves = mp.keySet(tablaCanciones)
+            size_llaves = lt.size(llaves)
+            j = 1
+            while j <= size_llaves:
+                elemento = lt.getElement(llaves, j)
+                pareja = mp.get(tablaCanciones, elemento)
+                llave = me.getKey(pareja)
+                valor = me.getValue(pareja)
+                esta = mp.contains(cancionesUnicas, llave)
+                if esta == False:
+                    crearPequeñaLista(valor, lista_hashtags)
+                    mp.put(cancionesUnicas, llave, lista_hashtags)
+                else:
+                    pareja = mp.get(cancionesUnicas, llave)
+                    valor2 = me.getValue(pareja)
+                    crearPequeñaLista(valor, valor2)
+                    mp.put(cancionesUnicas, llave, valor2)
             j += 1
 
         i += 1
