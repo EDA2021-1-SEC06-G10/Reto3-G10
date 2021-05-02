@@ -26,6 +26,7 @@
 
 
 import config as cf
+import time
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
@@ -168,7 +169,7 @@ def newGen(genero):
 
 def newGen2(genero):
 
-    entry= {'canciones': None, "reproducciones":0}
+    entry= {'canciones': None, "reproducciones":1}
     entry['canciones']= mp.newMap(3000,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
