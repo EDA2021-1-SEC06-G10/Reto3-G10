@@ -252,12 +252,14 @@ def addGenre2(dataentry, lista, cancion):
             if existeGen:
                 entry = mp.get(generos, llave)
                 gen = me.getValue(entry)
+                gen['reproducciones']+=1
             else:
                 gen = newGen2(llave)
                 mp.put(generos, llave, gen)
+                
             
             mp.put(gen['canciones'], cancion["track_id"],None)
-            gen['reproducciones']+=1
+            
     except Exception:
         return None
     
