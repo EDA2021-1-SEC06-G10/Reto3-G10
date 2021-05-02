@@ -851,30 +851,22 @@ def reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor):
     
     return total_reproducciones
 
-def crearListaGeneros(catalog, rango_menor, rango_mayor):
+def crearListaGeneros(catalog, keyset, rango_menor, rango_mayor):
     total_tamaño = 0
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     total_reproducciones = 0
     lista_generos = lt.newList('ARRAY_LIST')
-
-    i = 1
-    while i <= tamaño_tabla:
-        diccionario = lt.getElement(valores, i)
-        tablaGeneros = diccionario['generos']
-        generos = mp.keySet(tablaGeneros)
-        size_generos = lt.size(generos)
-        j = 1
-        while j <= size_generos:
-            elemento = lt.getElement(generos, j)
-            esta_genero = lt.isPresent(lista_generos, elemento)
-            if esta_genero == 0:
-                lt.addLast(lista_generos, elemento)
-            j += 1
+    size_generos = lt.size(keyset)
+    j = 1
+    while j <= size_generos:
+        elemento = lt.getElement(keyset, j)
+        esta_genero = lt.isPresent(lista_generos, elemento)
+        if esta_genero == 0:
+            lt.addLast(lista_generos, elemento)
+        j += 1
         
-        i += 1
-
     return lista_generos
     
 def consultaGenero(catalog, rango_menor, rango_mayor):
@@ -890,7 +882,8 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
-        diferentes_generos = crearListaGeneros(catalog, rango_menor, rango_mayor) # mp.keySet(tablaGeneros)
+        keyset = mp.keySet(tablaGeneros)
+        diferentes_generos = crearListaGeneros(catalog, keyset, rango_menor, rango_mayor)
         tamaño_diferentes_generos = lt.size(diferentes_generos)
         j = 1
         while j <= tamaño_diferentes_generos:
@@ -932,6 +925,7 @@ def crearPequeñaLista(lista_vieja, lista_nueva):
     while i <= size:
         elemento = lt.getElement(lista_vieja, i)
         lt.addLast(lista_nueva, elemento)
+        i += 1
     return lista_nueva
 
 def crearMapaTracks(catalog, rango_menor, rango_mayor):
@@ -942,7 +936,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     tamaño_tabla = lt.size(valores)
     cancionesUnicas = mp.newMap(3000, maptype='CHAINIG', loadfactor=4.0, comparefunction=compareArtistid)
     lista_hashtags = lt.newList('ARRAY_LIST')
-    i = 0
+    i = 1
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
@@ -966,8 +960,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
                     valor2 = me.getValue(pareja)
                     crearPequeñaLista(valor, valor2)
                     mp.put(cancionesUnicas, llave, valor2)
-            j += 1
-
+                j += 1
         i += 1
 
     total = mp.keySet(cancionesUnicas)
@@ -979,22 +972,21 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
     size_hashtags = lt.size(valor)
-    
+  
     tablaHashtags = catalog['info_VADER']
-    
+  
     total_vader = 0
-
-    i = 0
+    i = 1
     while i <= size_hashtags:
         elemento = lt.getElement(valor, i)
         pareja = mp.get(tablaHashtags, elemento)
         vader_avg = me.getValue(pareja)
         total_vader += vader_avg
-    
+        i += 1
+  
     vader_promedio = total_vader / size_hashtags
 
     tupla = (size_hashtags, vader_promedio)
-
     return tupla
 
 def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
@@ -1007,7 +999,7 @@ def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
         elemento = lt.getElement(llaves, i)
         tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor)
         mp.put(nueva_hash, elemento, tupla)
-
+        i += 1
     return nueva_hash      
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor):
@@ -1021,7 +1013,6 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor):
         pareja = mp.get(tablaGeneros, elemento)
         lt.addLast(lista, pareja)
         i += 1
-
     return lista
 
 # =================================================================
