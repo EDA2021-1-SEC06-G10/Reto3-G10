@@ -63,17 +63,17 @@ def newCatalog():
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
-                                           maptype='CHAINING',
-                                           loadfactor=4.0,
+                                           maptype='PROBING',
+                                           loadfactor=0.5,
                                            #comparefunction=compareKeys                                              
                                           )
     catalog['generos'] = mp.newMap(9,
-                                  maptype='CHAINING',
-                                  loadfactor=4.0,
+                                  maptype='PROBING',
+                                  loadfactor=0.5,
                                   comparefunction=compareGenre)
     catalog['info_VADER'] = mp.newMap(2500,
                                   maptype='CHAINING',
-                                  loadfactor=4.0,
+                                  loadfactor=0.5,
                                   comparefunction=compareGenre)
     
     catalog['instrumentalness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
