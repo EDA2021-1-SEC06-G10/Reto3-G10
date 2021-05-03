@@ -239,8 +239,8 @@ def addDateTree(catalog, cancion, lista):
 def newGenEntry(cancion):
     generosFecha={"fechaRepr": 0, "generos": None}
     generosFecha['generos']= mp.newMap(9,
-                                  maptype='CHAINING',
-                                  loadfactor=4.0,
+                                  maptype='PROBING',
+                                  loadfactor=0.5,
                                   comparefunction=compareGenre)
     return generosFecha
 
@@ -258,7 +258,7 @@ def addGenre2(dataentry, lista, cancion):
             mp.put(generos, llave, gen)
                 
         mp.put(gen['canciones'], cancion["track_id"], None)
-        # O esta opción: # gen['reproducciones'] += 1
+        # O esta opción: gen['reproducciones'] += 1
     
 # ================
 # Intrumentalness
@@ -690,7 +690,7 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     total_reproducciones = 0
     total_artistas = 0
     artistas_unicos = None
-    mapaArtistas = mp.newMap(22, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
+    mapaArtistas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
 
     while i <= tamaño_tabla:
