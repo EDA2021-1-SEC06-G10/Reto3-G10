@@ -169,7 +169,7 @@ def newGen(genero):
 
 def newGen2(genero):
 
-    entry= {'canciones': None, "reproducciones":1}
+    entry= {'canciones': None, "reproducciones": 1}
     entry['canciones']= mp.newMap(3000,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
@@ -231,8 +231,8 @@ def addDateTree(catalog, cancion, lista):
         
     else:
         dataentry=me.getValue(entry)
-    dataentry["fechaRepr"]+=1
-    addGenre2(dataentry,lista,cancion)    
+    dataentry["fechaRepr"] += 1
+    addGenre2(dataentry, lista, cancion)    
     return arbol
 
 def newGenEntry(cancion):
@@ -244,24 +244,20 @@ def newGenEntry(cancion):
     return generosFecha
 
 def addGenre2(dataentry, lista, cancion):
-    try:
-        generos = dataentry['generos']
-        for llave in lista:
-        
-            existeGen = mp.contains(generos, llave)
-            if existeGen:
-                entry = mp.get(generos, llave)
-                gen = me.getValue(entry)
-                gen['reproducciones']+=1
-            else:
-                gen = newGen2(llave)
-                mp.put(generos, llave, gen)
+    generos = dataentry['generos']
+
+    for llave in lista:
+        existeGen = mp.contains(generos, llave)
+        if existeGen:
+            entry = mp.get(generos, llave)
+            gen = me.getValue(entry)
+            # Está esta opción # gen['reproducciones'] += 1
+        else:
+            gen = newGen2(llave)
+            mp.put(generos, llave, gen)
                 
-            
-            mp.put(gen['canciones'], cancion["track_id"],None)
-            
-    except Exception:
-        return None
+        mp.put(gen['canciones'], cancion["track_id"], None)
+        # O esta opción: # gen['reproducciones'] += 1
     
 # ================
 # Intrumentalness
@@ -892,7 +888,7 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
             if elemento != None:
                 valor = me.getValue(elemento)
                 reproducciones = valor['reproducciones']
-                total_reproducciones = reproducciones
+                total_reproducciones += reproducciones
                 mp.put(generos, genero, total_reproducciones)
 
             j += 1
