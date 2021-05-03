@@ -659,14 +659,17 @@ def addSongToTreeEnergy(mapt, cancion):
 # Funciones para creacion de datos
 
 def newArtEntry(caracteristica, cancion):
-    artentry = {'caracteristica': None, 'artistas': None , 'canciones': None, "reproducciones": None} # Elina, Nicolás, 
-                                                                                                      # por favor no nos bajen.
-                                                                                                      # Carlos nos autorizó usar
-                                                                                                      # este diccionaro.
-    artentry['caracteristica'] = caracteristica
-    artentry['artistas'] = lt.newList('ARRAY_LIST', compareArtistas)
-    artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
-    artentry["reproducciones"]= lt.newList('ARRAY_LIST')
+    artentry = mp.newMap(4,
+                                  maptype='PROBING',
+                                  loadfactor=4.0,
+                                  comparefunction=compareGenre) 
+    mp.put(artentry,"caracterisica", caracteristica)
+    lista_artistas= lt.newList('ARRAY_LIST', compareArtistas)
+    mp.put(artentry,"artistas", lista_artistas)
+    lista_canciones= lt.newList('ARRAY_LIST', compareCanciones)
+    mp.put(artentry,"canciones",lista_canciones)
+    reproducciones= lt.newList('ARRAY_LIST')
+    mp.put(artentry,"reproducciones", reproducciones)
     return artentry
 
 # ======================
