@@ -94,14 +94,14 @@ def newCatalog():
 
 def addSong(catalog, cancion):
     addInstrumentalnessTreesToHashTable(catalog, cancion)
-    addLivenessTreesToHashTable(catalog, cancion)
-    addSpeechinessTreesToHashTable(catalog, cancion)
-    addDanceabilityTreesToHashTable(catalog, cancion)
-    addValenceTreesToHashTable(catalog, cancion)
-    addLoudnessTreesToHashTable(catalog, cancion)
-    addTempoTreesToHashTable(catalog, cancion)
-    addAcousticnessTreesToHashTable(catalog, cancion)
-    addEnergyTreesToHashTable(catalog, cancion)
+    #addLivenessTreesToHashTable(catalog, cancion)
+    #addSpeechinessTreesToHashTable(catalog, cancion)
+    #addDanceabilityTreesToHashTable(catalog, cancion)
+    #addValenceTreesToHashTable(catalog, cancion)
+    #addLoudnessTreesToHashTable(catalog, cancion)
+    #addTempoTreesToHashTable(catalog, cancion)
+    #addAcousticnessTreesToHashTable(catalog, cancion)
+    #addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
     addDateTree(catalog,cancion, lista)
     addToGenre(catalog, lista, cancion)
@@ -294,19 +294,31 @@ def addSongToTreeInstrumentalness(mapt, cancion):
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
-        lt.addLast(dataentry['canciones'], filtrado)
-        lt.addLast(dataentry['artistas'], cancion["artist_id"])
-        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+        canciones= mp.get(dataentry,"canciones")
+        lista_canciones=me.getValue(canciones)
+        lt.addLast(lista_canciones, filtrado)
+        artistas= mp.get(dataentry,"artistas")
+        lista_artistas=me.getValue(artistas)
+        lt.addLast(lista_artistas, cancion["artist_id"])
+        reproducciones= mp.get(dataentry,"reproducciones")
+        lista_reproducciones= me.getValue(reproducciones)
+        lt.addLast(lista_reproducciones, cancion["track_id"])
        
     else:
         dataentry = me.getValue(entry)
-        esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
+        canciones= mp.get(dataentry,"canciones")
+        lista_canciones=me.getValue(canciones)
+        esta_track = lt.isPresent(lista_canciones, filtrado['track_id'])
         if esta_track == 0:
-            lt.addLast(dataentry['canciones'], filtrado)
-        esta_artista = lt.isPresent(dataentry['artistas'], cancion['artist_id'])
+            lt.addLast(lista_canciones, filtrado)
+        artistas= mp.get(dataentry,"artistas")
+        lista_artistas=me.getValue(artistas)
+        esta_artista = lt.isPresent(lista_artistas, cancion['artist_id'])
         if esta_artista == 0:
-            lt.addLast(dataentry['artistas'], cancion["artist_id"])
-        lt.addLast(dataentry["reproducciones"], cancion["track_id"])
+            lt.addLast(lista_artistas, cancion["artist_id"])
+        reproducciones= mp.get(dataentry,"reproducciones")
+        lista_reproducciones= me.getValue(reproducciones)
+        lt.addLast(lista_reproducciones, cancion["track_id"])
     return mapt
 
 # ==========
@@ -664,7 +676,7 @@ def newArtEntry(caracteristica, cancion):
                                   loadfactor=4.0,
                                   comparefunction=compareGenre) 
     mp.put(artentry,"caracterisica", caracteristica)
-    lista_artistas= lt.newList('ARRAY_LIST', compareArtistas)
+    lista_artistas= lt.newList('ARRAY_LIST', cmpfunction= compareArtistas)
     mp.put(artentry,"artistas", lista_artistas)
     lista_canciones= lt.newList('ARRAY_LIST', compareCanciones)
     mp.put(artentry,"canciones",lista_canciones)
@@ -1033,9 +1045,9 @@ def compareArtistid(Id, entry):
     else:
         return -1
 
-# def compareTrackIds(musica, track_id):
-#     result = (track_id == musica['track_id'])
-#     return result
+def compareTrackIds(musica, track_id):
+     result = (track_id == musica['track_id'])
+     return result
 
 def compareValues(valor1, valor2):
     if valor1 > valor2:
@@ -1056,10 +1068,8 @@ def compareArtistas(artist1, cancion):
 def compareCanciones(cancion1, cancion):
     if cancion1 == cancion['track_id']:
         return 0
-    elif cancion1 > cancion['track_id']:
-        return 1
     else:
-        return -1
+        return 1
 
 def compareTracks(track1, track2):
     if track1 == track2:
