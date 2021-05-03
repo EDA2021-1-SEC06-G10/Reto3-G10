@@ -59,7 +59,8 @@ def newCatalog():
                 'acousticness_RBT': None,
                 'energy_RBT': None,
                 'date_RBT':None,
-                'info_VADER':None
+                'info_VADER':None,
+                'generos': None
                }
 
     catalog['caracteristicas'] = mp.newMap(20,
