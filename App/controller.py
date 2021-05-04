@@ -50,8 +50,8 @@ def loadData(catalog):
     start_memory = getMemory()
 
     loadContent(catalog)
-    # loadHashtagToSong(catalog)
-    # loadHashtagdata(catalog)
+    loadHashtagToSong(catalog)
+    loadHashtagdata(catalog)
     stop_memory = getMemory()
     stop_time = getTime()
     tracemalloc.stop()
@@ -222,8 +222,8 @@ def consultaTopGeneros(catalog, rango_menor, rango_mayor):
 def crearListaGeneros(catalog, rango_menor, rango_mayor):
     return model.crearListaGeneros(catalog, rango_menor, rango_mayor)
 
-def topCancionesPorGenero(catalog, rango_menor, rango_mayor):
-    return model.topCancionesPorGenero(catalog, rango_menor, rango_mayor)
+def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
+    return model.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
 
 # ==========================================
 # Funciones para medir el tiempo y memoria

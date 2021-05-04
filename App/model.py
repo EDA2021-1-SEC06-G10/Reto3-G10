@@ -1034,6 +1034,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
                         lt.addLast(valor2, elemento)
                         #crearPequeñaLista(valor, valor2)
                         #mp.put(cancionesUnicas, llave, valor2)
+                        k+=1
                 j += 1
         i += 1
 
@@ -1076,7 +1077,7 @@ def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
         i += 1
     return nueva_hash      
 
-def topCancionesPorGenero(catalog, rango_menor, rango_mayor):
+def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
     tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor)
     lista = lt.newList('ARRAY_LIST')
     llaves = mp.keySet(tablaGeneros)

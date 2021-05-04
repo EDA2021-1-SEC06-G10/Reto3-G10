@@ -209,7 +209,7 @@ while True:
         lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
         ordenada1 = controller.sortByHashTags(lista)
         print_Req5_1(ordenada1, reproducciones, rango_menor, rango_mayor)
-        top = controller.topCancionesPorGenero(catalog, rango_menor, rango_mayor)
+        top = controller.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
         ordenada2 = controller.sortByNumberOfReproductions(top)
         
         print_Req5_2(ordenada2, top)
