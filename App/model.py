@@ -74,7 +74,7 @@ def newCatalog():
                                   comparefunction=compareGenre)
     catalog['info_VADER'] = mp.newMap(2500,
                                   maptype='CHAINING',
-                                  loadfactor=0.5,
+                                  loadfactor=4.0,
                                   comparefunction=compareGenre)
     
     catalog['instrumentalness_RBT'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
@@ -258,7 +258,7 @@ def addGenre2(dataentry, lista, cancion):
             mp.put(generos, llave, gen)
                 
         mp.put(gen['canciones'], cancion["track_id"], None)
-        # O esta opción: gen['reproducciones'] += 1
+        gen['reproducciones'] += 1
     
 # ================
 # Intrumentalness

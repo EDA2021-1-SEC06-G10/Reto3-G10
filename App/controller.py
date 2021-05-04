@@ -62,7 +62,7 @@ def loadData(catalog):
     return delta_time, delta_memory
 
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-1000.csv'
+    contentfile = cf.data_dir + 'context_content_features-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
