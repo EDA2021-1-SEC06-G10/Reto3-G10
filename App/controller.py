@@ -50,8 +50,8 @@ def loadData(catalog):
     start_memory = getMemory()
 
     loadContent(catalog)
-    #loadHashtagToSong(catalog)
-    #loadHashtagdata(catalog)
+    loadHashtagToSong(catalog)
+    loadHashtagdata(catalog)
     stop_memory = getMemory()
     stop_time = getTime()
     tracemalloc.stop()
