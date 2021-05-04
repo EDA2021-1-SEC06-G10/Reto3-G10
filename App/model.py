@@ -676,7 +676,7 @@ def newArtEntry(caracteristica, cancion):
                                   loadfactor=4.0,
                                   comparefunction=compareGenre) 
     mp.put(artentry,"caracterisica", caracteristica)
-    lista_artistas= lt.newList('ARRAY_LIST', cmpfunction= compareArtistas)
+    lista_artistas= lt.newList('ARRAY_LIST', cmpfunction=compareArtistas, key=None)
     mp.put(artentry,"artistas", lista_artistas)
     lista_canciones= lt.newList('ARRAY_LIST', compareCanciones)
     mp.put(artentry,"canciones",lista_canciones)
