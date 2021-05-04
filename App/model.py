@@ -943,9 +943,10 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
             if elemento != None:
                 valor = me.getValue(elemento)
                 reproducciones = valor['reproducciones']
-                genero2=mp.get(mapa,genero)
+                genero2=mp.get(generos,genero)
                 value= me.getValue(genero2)
                 value+=reproducciones
+                mp.put(generos,genero, value)
 
             j += 1
         

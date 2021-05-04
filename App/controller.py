@@ -62,11 +62,11 @@ def loadData(catalog):
     return delta_time, delta_memory
 
 def loadContent(catalog):
-    contentfile = cf.data_dir + 'context_content_features-chiquitín.csv'
+    contentfile = cf.data_dir + 'context_content_features-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
         adaptado= {}
-        adaptado["instrumentalness"]= float(cancion['\ufeff"instrumentalness"']) 
+        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
         adaptado["liveness"]= float(cancion["liveness"])
         adaptado["speechiness"]= float(cancion["speechiness"])
         adaptado["danceability"]= float(cancion["danceability"])
