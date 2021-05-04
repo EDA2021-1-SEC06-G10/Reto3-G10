@@ -1027,9 +1027,9 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
                     pareja = mp.get(cancionesUnicas, llave)
                     valor2 = me.getValue(pareja)
                     k = 1
-                    while  <= lt.size(valor):
-                        elemento = lt.getElement(valor, k)
-                        lt.addLast(valor2, elemento)
+                    # while  <= lt.size(valor):
+                    #     elemento = lt.getElement(valor, k)
+                    #     lt.addLast(valor2, elemento)
                         #crearPequeñaLista(valor, valor2)
                         #mp.put(cancionesUnicas, llave, valor2)
                 j += 1
