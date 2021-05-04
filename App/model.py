@@ -703,6 +703,7 @@ def newArtEntry(caracteristica, cancion):
     artentry['artistas'] = lt.newList('ARRAY_LIST', compareArtistas)
     artentry['canciones'] = lt.newList('ARRAY_LIST', compareCanciones)
     artentry["reproducciones"]= lt.newList('ARRAY_LIST')
+    return artentry
 
     # artentry = mp.newMap(8, maptype='PROBING', loadfactor=0.5) #, comparefunction=compareArtistas)
 
@@ -747,13 +748,13 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
 
-        artistas_par = mp.get(tabla, 'artistas')
-        lista_artistas = me.getValue(artistas_par)
+        # artistas_par = mp.get(tabla, 'artistas')
+        # lista_artistas = me.getValue(artistas_par)
 
-        reproducciones_par = mp.get(tabla, 'reproducciones')
-        lista_reproducciones = me.getValue(reproducciones_par)
-        #lista_reproducciones = tabla['reproducciones']
-        #lista_artistas = tabla['artistas']
+        # reproducciones_par = mp.get(tabla, 'reproducciones')
+        # lista_reproducciones = me.getValue(reproducciones_par)
+        lista_reproducciones = tabla['reproducciones']
+        lista_artistas = tabla['artistas']
         size_lista_artistas = lt.size(lista_artistas)
 
         j = 1
@@ -1027,9 +1028,9 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
                     pareja = mp.get(cancionesUnicas, llave)
                     valor2 = me.getValue(pareja)
                     k = 1
-                    # while  <= lt.size(valor):
-                    #     elemento = lt.getElement(valor, k)
-                    #     lt.addLast(valor2, elemento)
+                    while k <= lt.size(valor):
+                        elemento = lt.getElement(valor, k)
+                        lt.addLast(valor2, elemento)
                         #crearPequeñaLista(valor, valor2)
                         #mp.put(cancionesUnicas, llave, valor2)
                 j += 1
@@ -1123,11 +1124,9 @@ def compareArtistas(artist1, cancion):
         return -1
 
 def compareCanciones(cancion1, cancion):
-    # if cancion1 != cancion['track_id']:
-    #     return True
     if cancion1 == cancion['track_id']:
         return 0
-    elif cancion1 != cancion['track_id']:
+    elif cancion1 > cancion['track_id']:
         return 1
     else:
         return -1
