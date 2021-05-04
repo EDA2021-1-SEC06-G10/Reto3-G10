@@ -252,13 +252,12 @@ def addGenre2(dataentry, lista, cancion):
         if existeGen:
             entry = mp.get(generos, llave)
             gen = me.getValue(entry)
-            # Está esta opción # gen['reproducciones'] += 1
+            gen['reproducciones'] += 1
         else:
             gen = newGen2(llave)
             mp.put(generos, llave, gen)
                 
         mp.put(gen['canciones'], cancion["track_id"], None)
-        gen['reproducciones'] += 1
     
 # ================
 # Intrumentalness
@@ -872,31 +871,41 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
-    total_reproducciones = 0
-    generos = mp.newMap(9, maptype='CHAINING', loadfactor=4.0)
-
+    generos = mapaTempGen()
     i = 1
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
         keyset = mp.keySet(tablaGeneros)
-        diferentes_generos = crearListaGeneros(catalog, keyset, rango_menor, rango_mayor)
-        tamaño_diferentes_generos = lt.size(diferentes_generos)
+        tamaño_diferentes_generos = lt.size(keyset)
         j = 1
         while j <= tamaño_diferentes_generos:
-            genero = lt.getElement(diferentes_generos, j)
+            genero = lt.getElement(keyset, j)
             elemento = mp.get(tablaGeneros, genero)
             if elemento != None:
                 valor = me.getValue(elemento)
                 reproducciones = valor['reproducciones']
-                total_reproducciones += reproducciones
-                mp.put(generos, genero, total_reproducciones)
+                genero2=mp.get(mapa,genero)
+                value= me.getValue(genero2)
+                value+=reproducciones
 
             j += 1
         
         i += 1
 
     return generos
+
+def mapaTempGen():
+    lista = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
+    i=0
+    size= len(lista)
+    mapa= mp.newMap(9, maptype='PROBING', loadfactor=0.5)
+
+    while i < size:
+        llave=lista[i]
+        mp.put(mapa,llave, 0)
+        i+=1
+    return mapa
 
 def consultaTopGeneros(catalog, rango_menor, rango_mayor):
     generos = consultaGenero(catalog, rango_menor, rango_mayor)
