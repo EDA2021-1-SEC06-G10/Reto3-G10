@@ -1052,9 +1052,11 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     i = 1
     while i <= size_hashtags:
         elemento = lt.getElement(valor, i)
-        pareja = mp.get(tablaHashtags, elemento)
-        vader_avg = me.getValue(pareja)
-        total_vader += vader_avg
+        esta = mp.contains(tablaHashtags, elemento)
+        if esta == True:
+            pareja = mp.get(tablaHashtags, elemento)
+            vader_avg = me.getValue(pareja)
+            total_vader += vader_avg
         i += 1
   
     vader_promedio = total_vader / size_hashtags
