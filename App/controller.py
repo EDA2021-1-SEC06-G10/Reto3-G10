@@ -50,8 +50,8 @@ def loadData(catalog):
     start_memory = getMemory()
 
     loadContent(catalog)
-    loadHashtagToSong(catalog)
     loadHashtagdata(catalog)
+    loadHashtagToSong(catalog)
     stop_memory = getMemory()
     stop_time = getTime()
     tracemalloc.stop()
@@ -101,7 +101,7 @@ def loadHashtagdata(catalog):
          filtro={}
          if hashtag["vader_avg"] != "":
              filtro["hashtag"]= hashtag['hashtag']
-             filtro["vader_avg"]= hashtag["vader_avg"]
+             filtro["vader_avg"]= float(hashtag["vader_avg"])
              model.addVader(catalog, hashtag)
 
 # Funciones de ordenamiento

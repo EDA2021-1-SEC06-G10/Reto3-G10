@@ -97,11 +97,11 @@ def print_Req5_1(lista, reproducciones, rango_menor, rango_mayor):
         print('TOP ' + str(i) + ': ' + str(elemento['key']) + ' con ' + str(elemento['value']) + ' reproducciones.')
         i += 1
 
-def print_Req5_2(lista1, lista2):
+def print_Req5_2(lista1, lista2, genero, reproducciones):
     top = lt.getElement(lista1[1], 1)
-    print('El GÉNERO TOP es ' + str(top['key']) + ' con ' + str(top['value']) + '.')
+    print('El GÉNERO TOP es ' + genero + ' con ' + str(reproducciones) + '.')
     print('=' * 25 + ' ' + str(top['key']) + ' ANÁLISIS ' + '=' * 25)
-    print(str(top['key']) + ' tiene ') # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
+    print(genero + ' tiene '+ str(tamano) +" pistas unicas") # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
     print('Las primeras 10 canciones son: ')
     
     size_lista2 = lt.size(lista2)
@@ -203,16 +203,18 @@ while True:
         genero = ''
         rango_menor_str = '07:15:00'
         rango_menor = datetime.strptime(rango_menor_str, "%H:%M:%S")
-        rango_mayor_str = '09:45:00'
+        rango_mayor_str = '07:20:00'
         rango_mayor = datetime.strptime(rango_mayor_str, "%H:%M:%S")
         reproducciones = controller.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
         lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
         ordenada1 = controller.sortByHashTags(lista)
         print_Req5_1(ordenada1, reproducciones, rango_menor, rango_mayor)
+        elemento= lt.getElement(ordenada1[1], 1)
+        genero= elemento['key']
+        reprmasgrandes= elemento['value']
         top = controller.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
         ordenada2 = controller.sortByNumberOfReproductions(top)
-        
-        print_Req5_2(ordenada2, top)
+        print_Req5_2(ordenada2, top, genero, reprmasgrandes)
     else:
         sys.exit(0)
 sys.exit(0)

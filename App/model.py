@@ -94,15 +94,15 @@ def newCatalog():
 
 
 def addSong(catalog, cancion):
-    addInstrumentalnessTreesToHashTable(catalog, cancion)
-    addLivenessTreesToHashTable(catalog, cancion)
-    addSpeechinessTreesToHashTable(catalog, cancion)
-    addDanceabilityTreesToHashTable(catalog, cancion)
-    addValenceTreesToHashTable(catalog, cancion)
-    addLoudnessTreesToHashTable(catalog, cancion)
-    addTempoTreesToHashTable(catalog, cancion)
-    addAcousticnessTreesToHashTable(catalog, cancion)
-    addEnergyTreesToHashTable(catalog, cancion)
+    #addInstrumentalnessTreesToHashTable(catalog, cancion)
+    #addLivenessTreesToHashTable(catalog, cancion)
+    #addSpeechinessTreesToHashTable(catalog, cancion)
+    #addDanceabilityTreesToHashTable(catalog, cancion)
+    #addValenceTreesToHashTable(catalog, cancion)
+    #addLoudnessTreesToHashTable(catalog, cancion)
+    #addTempoTreesToHashTable(catalog, cancion)
+    #addAcousticnessTreesToHashTable(catalog, cancion)
+    #addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
     addDateTree(catalog,cancion, lista)
     addToGenre(catalog, lista, cancion)
@@ -993,19 +993,17 @@ def crearPequeñaLista(lista_vieja, lista_nueva):
         i += 1
     return lista_nueva
 
-def crearMapaTracks(catalog, rango_menor, rango_mayor):
-    lista = consultaTopGeneros(catalog, rango_menor, rango_mayor)
-    top_genero = lt.getElement(lista, 1)
+def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
-    cancionesUnicas = mp.newMap(3000, maptype='CHAINIG', loadfactor=4.0, comparefunction=compareArtistid)
+    cancionesUnicas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     lista_hashtags = lt.newList('ARRAY_LIST')
     i = 1
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
-        diccionario_2 = mp.get(tablaGeneros, top_genero['key'])
+        diccionario_2 = mp.get(tablaGeneros, genero)
         if diccionario_2 != None:
             tablaCanciones = diccionario_2['value']['canciones']
             llaves = mp.keySet(tablaCanciones)
@@ -1042,8 +1040,8 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     total_canciones_unicas = lt.size(total)
     return (cancionesUnicas, total_canciones_unicas)
 
-def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor):
-    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
+def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor, genero):
+    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
     size_hashtags = lt.size(valor)
@@ -1058,6 +1056,7 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
         if esta == True:
             pareja = mp.get(tablaHashtags, elemento)
             vader_avg = me.getValue(pareja)
+            vader_avg= float(vader_avg)
             total_vader += vader_avg
         i += 1
   
@@ -1066,21 +1065,21 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     tupla = (size_hashtags, vader_promedio)
     return tupla
 
-def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
-    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
+def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
+    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     llaves = mp.keySet(tablaCanciones[0])
     size_llaves = lt.size(llaves)
     nueva_hash = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
     while i <= size_llaves:
         elemento = lt.getElement(llaves, i)
-        tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor)
+        tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor, genero)
         mp.put(nueva_hash, elemento, tupla)
         i += 1
     return nueva_hash      
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
-    tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor)
+    tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero)
     lista = lt.newList('ARRAY_LIST')
     llaves = mp.keySet(tablaGeneros)
     size_llaves = lt.size(llaves)
@@ -1235,3 +1234,57 @@ def horamilitar(stringAM):
     stringAM= stringAM[:len(stringAM)-2]
     stringAM = stringAM+"00"
     return stringAM
+
+#============================
+# INTENTO DEL 5.2
+#============================
+def Mapa52():
+    mapa=mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
+    return mapa
+
+def llenarmapa(catalog, rango_menor, rango_mayor, genero):
+    arbol = catalog['date_RBT']
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    cancionesUnicas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
+    lista_hashtags = lt.newList('ARRAY_LIST')
+    i = 1
+    while i <= tamaño_tabla:
+        diccionario = lt.getElement(valores, i)
+        tablaGeneros = diccionario['generos']
+        generotop = mp.get(tablaGeneros, genero)
+        if diccionario_2 != None:
+            tablaCanciones = generotop['canciones']
+            llaves = mp.keySet(tablaCanciones)
+            size_llaves = lt.size(llaves)
+            j = 1
+            while j <= size_llaves:
+                elemento = lt.getElement(llaves, j)
+                pareja = mp.get(tablaCanciones, elemento)
+                llave = me.getKey(pareja)
+                valor = me.getValue(pareja)
+                esta = mp.contains(cancionesUnicas, llave)
+                if esta == False:
+                    mp.put(cancionesUnicas, llave, valor)
+                    # k = 1
+                    # while k <= lt.size(valor):
+                    #     elemento = lt.getElement(valor, k)
+                    #     lt.addLast(lista_hashtags, elemento)
+                    #     #crearPequeñaLista(valor, lista_hashtags)
+                    #     mp.put(cancionesUnicas, llave, lista_hashtags)
+                else:
+                    pareja = mp.get(cancionesUnicas, llave)
+                    valor2 = me.getValue(pareja)
+                    k = 1
+                    while k <= lt.size(valor):
+                        elemento = lt.getElement(valor, k)
+                        lt.addLast(valor2, elemento)
+                        #crearPequeñaLista(valor, valor2)
+                        #mp.put(cancionesUnicas, llave, valor2)
+                        k+=1
+                j += 1
+        i += 1
+
+    total = mp.keySet(cancionesUnicas)
+    total_canciones_unicas = lt.size(total)
+    return (cancionesUnicas, total_canciones_unicas)
