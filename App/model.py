@@ -1031,10 +1031,12 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                     k = 1
                     while k <= lt.size(valor):
                         elemento = lt.getElement(valor, k)
-                        lt.addLast(valor2, elemento)
+                        esta = lt.isPresent(valor, elemento)
+                        if esta == 0:
+                            lt.addLast(valor2, elemento)
                         #crearPequeñaLista(valor, valor2)
                         #mp.put(cancionesUnicas, llave, valor2)
-                        k+=1
+                        k += 1
                 j += 1
         i += 1
 
