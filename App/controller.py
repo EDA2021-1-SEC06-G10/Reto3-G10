@@ -52,6 +52,7 @@ def loadData(catalog):
     loadContent(catalog)
     loadHashtagdata(catalog)
     loadHashtagToSong(catalog)
+
     stop_memory = getMemory()
     stop_time = getTime()
     tracemalloc.stop()
@@ -217,13 +218,65 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
     return model.consultaGenero(catalog, rango_menor, rango_mayor)
 
 def consultaTopGeneros(catalog, rango_menor, rango_mayor):
-    return model.consultaTopGeneros(catalog, rango_menor, rango_mayor)
+    consulta = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+
+    consulta = model.consultaTopGeneros(catalog, rango_menor, rango_mayor)
+
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (consulta)
 
 def crearListaGeneros(catalog, rango_menor, rango_mayor):
     return model.crearListaGeneros(catalog, rango_menor, rango_mayor)
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
-    return model.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
+    consulta = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+
+    consulta = model.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
+
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (consulta)
 
 # ==========================================
 # Funciones para medir el tiempo y memoria
