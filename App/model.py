@@ -1068,7 +1068,7 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
 
 def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
-    llaves = mp.keySet(tablaCanciones)
+    llaves = mp.keySet(tablaCanciones[0])
     size_llaves = lt.size(llaves)
     nueva_hash = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
