@@ -997,7 +997,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
-    cancionesUnicas = mp.newMap(3000, maptype='CHAINIG', loadfactor=4.0, comparefunction=compareArtistid)
+    cancionesUnicas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     lista_hashtags = lt.newList('ARRAY_LIST')
     i = 1
     while i <= tamaño_tabla:
@@ -1056,6 +1056,7 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
         if esta == True:
             pareja = mp.get(tablaHashtags, elemento)
             vader_avg = me.getValue(pareja)
+            vader_avg= float(vader_avg)
             total_vader += vader_avg
         i += 1
   
@@ -1233,3 +1234,57 @@ def horamilitar(stringAM):
     stringAM= stringAM[:len(stringAM)-2]
     stringAM = stringAM+"00"
     return stringAM
+
+#============================
+# INTENTO DEL 5.2
+#============================
+def Mapa52():
+    mapa=mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
+    return mapa
+
+def llenarmapa(catalog, rango_menor, rango_mayor, genero):
+    arbol = catalog['date_RBT']
+    valores = om.values(arbol, rango_menor, rango_mayor)
+    tamaño_tabla = lt.size(valores)
+    cancionesUnicas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
+    lista_hashtags = lt.newList('ARRAY_LIST')
+    i = 1
+    while i <= tamaño_tabla:
+        diccionario = lt.getElement(valores, i)
+        tablaGeneros = diccionario['generos']
+        generotop = mp.get(tablaGeneros, genero)
+        if diccionario_2 != None:
+            tablaCanciones = generotop['canciones']
+            llaves = mp.keySet(tablaCanciones)
+            size_llaves = lt.size(llaves)
+            j = 1
+            while j <= size_llaves:
+                elemento = lt.getElement(llaves, j)
+                pareja = mp.get(tablaCanciones, elemento)
+                llave = me.getKey(pareja)
+                valor = me.getValue(pareja)
+                esta = mp.contains(cancionesUnicas, llave)
+                if esta == False:
+                    mp.put(cancionesUnicas, llave, valor)
+                    # k = 1
+                    # while k <= lt.size(valor):
+                    #     elemento = lt.getElement(valor, k)
+                    #     lt.addLast(lista_hashtags, elemento)
+                    #     #crearPequeñaLista(valor, lista_hashtags)
+                    #     mp.put(cancionesUnicas, llave, lista_hashtags)
+                else:
+                    pareja = mp.get(cancionesUnicas, llave)
+                    valor2 = me.getValue(pareja)
+                    k = 1
+                    while k <= lt.size(valor):
+                        elemento = lt.getElement(valor, k)
+                        lt.addLast(valor2, elemento)
+                        #crearPequeñaLista(valor, valor2)
+                        #mp.put(cancionesUnicas, llave, valor2)
+                        k+=1
+                j += 1
+        i += 1
+
+    total = mp.keySet(cancionesUnicas)
+    total_canciones_unicas = lt.size(total)
+    return (cancionesUnicas, total_canciones_unicas)
