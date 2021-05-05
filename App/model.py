@@ -94,15 +94,15 @@ def newCatalog():
 
 
 def addSong(catalog, cancion):
-    addInstrumentalnessTreesToHashTable(catalog, cancion)
-    addLivenessTreesToHashTable(catalog, cancion)
-    addSpeechinessTreesToHashTable(catalog, cancion)
-    addDanceabilityTreesToHashTable(catalog, cancion)
-    addValenceTreesToHashTable(catalog, cancion)
-    addLoudnessTreesToHashTable(catalog, cancion)
-    addTempoTreesToHashTable(catalog, cancion)
-    addAcousticnessTreesToHashTable(catalog, cancion)
-    addEnergyTreesToHashTable(catalog, cancion)
+    #addInstrumentalnessTreesToHashTable(catalog, cancion)
+    #addLivenessTreesToHashTable(catalog, cancion)
+    #addSpeechinessTreesToHashTable(catalog, cancion)
+    #addDanceabilityTreesToHashTable(catalog, cancion)
+    #addValenceTreesToHashTable(catalog, cancion)
+    #addLoudnessTreesToHashTable(catalog, cancion)
+    #addTempoTreesToHashTable(catalog, cancion)
+    #addAcousticnessTreesToHashTable(catalog, cancion)
+    #addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
     addDateTree(catalog,cancion, lista)
     addToGenre(catalog, lista, cancion)
@@ -993,9 +993,7 @@ def crearPequeñaLista(lista_vieja, lista_nueva):
         i += 1
     return lista_nueva
 
-def crearMapaTracks(catalog, rango_menor, rango_mayor):
-    lista = consultaTopGeneros(catalog, rango_menor, rango_mayor)
-    top_genero = lt.getElement(lista, 1)
+def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
@@ -1005,7 +1003,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
         tablaGeneros = diccionario['generos']
-        diccionario_2 = mp.get(tablaGeneros, top_genero['key'])
+        diccionario_2 = mp.get(tablaGeneros, genero)
         if diccionario_2 != None:
             tablaCanciones = diccionario_2['value']['canciones']
             llaves = mp.keySet(tablaCanciones)
@@ -1042,8 +1040,8 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor):
     total_canciones_unicas = lt.size(total)
     return (cancionesUnicas, total_canciones_unicas)
 
-def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor):
-    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
+def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor, genero):
+    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
     size_hashtags = lt.size(valor)
@@ -1064,21 +1062,21 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     tupla = (size_hashtags, vader_promedio)
     return tupla
 
-def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor):
-    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor)
-    llaves = mp.keySet(tablaCanciones)
+def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
+    tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
+    llaves = mp.keySet(tablaCanciones[0])
     size_llaves = lt.size(llaves)
     nueva_hash = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
     i = 1
     while i <= size_llaves:
         elemento = lt.getElement(llaves, i)
-        tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor)
+        tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor, genero)
         mp.put(nueva_hash, elemento, tupla)
         i += 1
     return nueva_hash      
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
-    tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor)
+    tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero)
     lista = lt.newList('ARRAY_LIST')
     llaves = mp.keySet(tablaGeneros)
     size_llaves = lt.size(llaves)

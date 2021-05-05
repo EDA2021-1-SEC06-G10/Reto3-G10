@@ -101,7 +101,7 @@ def loadHashtagdata(catalog):
          filtro={}
          if hashtag["vader_avg"] != "":
              filtro["hashtag"]= hashtag['hashtag']
-             filtro["vader_avg"]= hashtag["vader_avg"]
+             filtro["vader_avg"]= float(hashtag["vader_avg"])
              model.addVader(catalog, hashtag)
 
 # Funciones de ordenamiento
