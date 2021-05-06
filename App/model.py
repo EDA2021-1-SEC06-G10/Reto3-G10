@@ -1029,11 +1029,12 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                     pareja = mp.get(cancionesUnicas, llave)
                     valor2 = me.getValue(pareja)
                     k = 1
-                    while k <= lt.size(valor):
-                        elemento = lt.getElement(valor, k)
-                        esta = lt.isPresent(valor, elemento)
-                        if esta == 0:
-                            lt.addLast(valor2, elemento)
+                    if valor !=None:
+                        while k <= lt.size(valor):
+                            elemento = lt.getElement(valor, k)
+                            esta = lt.isPresent(valor, elemento)
+                            if esta == 0:
+                                lt.addLast(valor2, elemento)
                         #crearPequeñaLista(valor, valor2)
                         #mp.put(cancionesUnicas, llave, valor2)
                         k += 1
@@ -1048,26 +1049,28 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
-    size_hashtags = lt.size(valor)
+    if valor != None:
+        size_hashtags = lt.size(valor)
   
-    tablaHashtags = catalog['info_VADER']
+        tablaHashtags = catalog['info_VADER']
   
-    total_vader = 0
-    i = 1
-    while i <= size_hashtags:
-        elemento = lt.getElement(valor, i)
-        # esta = mp.contains(tablaHashtags, elemento)
-        # if esta == True:
-        pareja = mp.get(tablaHashtags, elemento)
-        vader_avg = me.getValue(pareja)
-        vader_avg = float(vader_avg)
-        total_vader += vader_avg
-        i += 1
+        total_vader = 0
+        i = 1
+        while i <= size_hashtags:
+            elemento = lt.getElement(valor, i)
+            esta = mp.contains(tablaHashtags, elemento)
+            if esta == True:
+                pareja = mp.get(tablaHashtags, elemento)
+                vader_avg = me.getValue(pareja)
+                vader_avg = float(vader_avg)
+                total_vader += vader_avg
+            i += 1
   
-    vader_promedio = total_vader / size_hashtags
-
-    tupla = (size_hashtags, vader_promedio, tablaCanciones[1])
-    return tupla
+        vader_promedio = total_vader / size_hashtags
+        tupla = (size_hashtags, vader_promedio, tablaCanciones[1])
+        return tupla
+    else:
+        pass
 
 def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
@@ -1096,6 +1099,12 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
         i += 1
     return (lista)
 
+def filtropresort(lista):
+    retorno=  lt.newList("ARRAY_LIST")
+    for elemento in lt.iterator(lista):
+        if elemento['value']!=None:
+            lt.addLast(retorno,elemento)
+    return retorno
 # =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
 # =================================================================

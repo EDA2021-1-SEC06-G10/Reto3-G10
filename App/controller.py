@@ -248,6 +248,9 @@ def consultaTopGeneros(catalog, rango_menor, rango_mayor):
 
 def crearListaGeneros(catalog, rango_menor, rango_mayor):
     return model.crearListaGeneros(catalog, rango_menor, rango_mayor)
+    
+def filtropresort(lista):
+    return model.filtropresort(lista)
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
     consulta = None
