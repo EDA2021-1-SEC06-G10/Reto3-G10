@@ -1101,12 +1101,12 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
         i += 1
     return (lista)
 
-def filtropresort(lista):
-    retorno=  lt.newList("ARRAY_LIST")
-    for elemento in lt.iterator(lista):
-        if elemento['value'][0] != None:
-            lt.addLast(retorno,elemento)
-    return retorno
+# def filtropresort(lista):
+#     retorno=  lt.newList("ARRAY_LIST")
+#     for elemento in lt.iterator(lista):
+#         if elemento['value'][0] != None:
+#             lt.addLast(retorno,elemento)
+#     return retorno
 
 # def filtropresort(lista):
 #     retorno = lt.newList('ARRAY_LIST')

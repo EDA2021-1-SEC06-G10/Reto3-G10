@@ -213,8 +213,7 @@ while True:
         genero= elemento['key']
         reprmasgrandes= elemento['value']
         top = controller.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
-        filtro= controller.filtropresort(top)
-        ordenada2 = controller.sortByNumberOfReproductions(filtro)
+        ordenada2 = controller.sortByNumberOfReproductions(top)
         print_Req5_2(ordenada2, top, genero, reprmasgrandes)
     else:
         sys.exit(0)
