@@ -58,7 +58,7 @@ def print_Req1(tamaño, categoria, rango_menor, rango_mayor):
 
 def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
     size = tupla[0]
-    i = 0
+    i = 1
     print('\n')
     print('Entre ' + str(rango_menor1) + ' y ' + str(rango_mayor1) + ' para ' + str(categoria1) + '.')
     print('Entre ' + str(rango_menor2) + ' y ' + str(rango_mayor2) + ' para ' + str(categoria2) + '.')
@@ -66,10 +66,10 @@ def print_Req2y3(tupla, categoria1, categoria2, categoria_1, categoria_2, rango_
     print('+' * 50 + '\n')
     print('5 canciones random: ')
 
-    while i < 5:
+    while i < 6:
         numero = random.randint(0, (size - 1))
         track = lt.getElement(tupla[1], numero)
-        print('Track ' + str(i + 1) + ': ' + str(track['track_id']) + ' con ' + str(track[str(categoria_1)]) + ' de ' + str(categoria1) + ' y ' + str(track[str(categoria_2)]) + ' de ' + str(categoria2) + '.')
+        print('Track ' + str(i) + ': ' + str(track['track_id']) + ' con ' + str(track[str(categoria_1)]) + ' de ' + str(categoria1) + ' y ' + str(track[str(categoria_2)]) + ' de ' + str(categoria2) + '.')
         i += 1
     print('+' * 50 + '\n')
 
@@ -100,14 +100,14 @@ def print_Req5_1(lista, reproducciones, rango_menor, rango_mayor):
 def print_Req5_2(lista1, lista2, genero, reproducciones):
     top = lt.getElement(lista1[1], 1)
     print('El GÉNERO TOP es ' + genero + ' con ' + str(reproducciones) + '.')
-    print('=' * 25 + ' ' + str(top['key']) + ' ANÁLISIS ' + '=' * 25)
+    print('=' * 25 + ' ' + genero + ' ANÁLISIS ' + '=' * 25)
     print(genero + ' tiene '+ str(top['value'][2]) +" pistas unicas") # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
     print('Las primeras 10 canciones son: ')
     
-    size_lista2 = lt.size(lista2)
+    size_lista2 = lt.size(lista1[1])
     i = 1
     while i <= size_lista2:
-        elemento = lt.getElement(lista2, i)
+        elemento = lt.getElement(lista1[1], i)
         if i <= 10:
             print('TOP ' + str(i) + ': ' + str(elemento['key']) + ' con ' + str(elemento['value'][0]) + ' hashtags y VADER promedio de: ' + str(elemento['value'][1]))
         i += 1
