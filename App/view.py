@@ -101,7 +101,7 @@ def print_Req5_2(lista1, lista2, genero, reproducciones):
     top = lt.getElement(lista1[1], 1)
     print('El GÉNERO TOP es ' + genero + ' con ' + str(reproducciones) + '.')
     print('=' * 25 + ' ' + str(top['key']) + ' ANÁLISIS ' + '=' * 25)
-    print(genero + ' tiene '+ str(tamano) +" pistas unicas") # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
+    print(genero + ' tiene '+ str(top['value'][2]) +" pistas unicas") # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
     print('Las primeras 10 canciones son: ')
     
     size_lista2 = lt.size(lista2)

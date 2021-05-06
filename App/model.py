@@ -1060,13 +1060,13 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
         # if esta == True:
         pareja = mp.get(tablaHashtags, elemento)
         vader_avg = me.getValue(pareja)
-        vader_avg= float(vader_avg)
+        vader_avg = float(vader_avg)
         total_vader += vader_avg
         i += 1
   
     vader_promedio = total_vader / size_hashtags
 
-    tupla = (size_hashtags, vader_promedio)
+    tupla = (size_hashtags, vader_promedio, tablaCanciones[1])
     return tupla
 
 def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
@@ -1080,7 +1080,8 @@ def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
         tupla = darthVaderPorUnaCancion(catalog, tablaCanciones, elemento, rango_menor, rango_mayor, genero)
         mp.put(nueva_hash, elemento, tupla)
         i += 1
-    return nueva_hash      
+
+    return (nueva_hash)       
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
     tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero)
@@ -1093,7 +1094,7 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
         pareja = mp.get(tablaGeneros, elemento)
         lt.addLast(lista, pareja)
         i += 1
-    return lista
+    return (lista)
 
 # =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
