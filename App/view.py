@@ -101,7 +101,7 @@ def print_Req5_2(lista1, lista2, genero, reproducciones):
     top = lt.getElement(lista1[1], 1)
     print('El GÉNERO TOP es ' + genero + ' con ' + str(reproducciones) + '.')
     print('=' * 25 + ' ' + str(top['key']) + ' ANÁLISIS ' + '=' * 25)
-    print(genero + ' tiene '+ str(tamano) +" pistas unicas") # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
+    print(genero + ' tiene '+ "str(tamano)" +" pistas unicas") # AQUÍ VAN LOS TRACKS ÚNICOS DEL GÉNERO TOP
     print('Las primeras 10 canciones son: ')
     
     size_lista2 = lt.size(lista2)
@@ -203,7 +203,7 @@ while True:
         genero = ''
         rango_menor_str = '07:15:00'
         rango_menor = datetime.strptime(rango_menor_str, "%H:%M:%S")
-        rango_mayor_str = '07:20:00'
+        rango_mayor_str = '07:30:00'
         rango_mayor = datetime.strptime(rango_mayor_str, "%H:%M:%S")
         reproducciones = controller.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
         lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
