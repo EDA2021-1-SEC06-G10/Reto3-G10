@@ -115,7 +115,7 @@ def addHT(catalog, cancion):
     if existe== False:
         lista = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
         addHTinfo(catalog, lista, cancion)
-    lista.clear()
+        lista.clear()
     
 # =================
 # Para los géneros

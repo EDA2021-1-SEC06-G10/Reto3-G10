@@ -203,7 +203,7 @@ while True:
         genero = ''
         rango_menor_str = '07:15:00'
         rango_menor = datetime.strptime(rango_menor_str, "%H:%M:%S")
-        rango_mayor_str = '07:20:00'
+        rango_mayor_str = '07:30:00'
         rango_mayor = datetime.strptime(rango_mayor_str, "%H:%M:%S")
         reproducciones = controller.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
         lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
