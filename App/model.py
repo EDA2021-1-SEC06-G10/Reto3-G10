@@ -1049,28 +1049,30 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
-    if valor != None:
-        size_hashtags = lt.size(valor)
+    #if valor != None:
+    size_hashtags = lt.size(valor)
   
-        tablaHashtags = catalog['info_VADER']
+    tablaHashtags = catalog['info_VADER']
   
-        total_vader = 0
-        i = 1
-        while i <= size_hashtags:
-            elemento = lt.getElement(valor, i)
-            esta = mp.contains(tablaHashtags, elemento)
-            if esta == True:
-                pareja = mp.get(tablaHashtags, elemento)
+    total_vader = 0
+    i = 1
+    while i <= size_hashtags:
+        elemento = lt.getElement(valor, i)
+        esta = mp.contains(tablaHashtags, elemento)
+        if esta == True:
+            pareja = mp.get(tablaHashtags, elemento)
+            if pareja != None:
                 vader_avg = me.getValue(pareja)
                 vader_avg = float(vader_avg)
                 total_vader += vader_avg
-            i += 1
+            else:
+                pass
+        i += 1
   
-        vader_promedio = total_vader / size_hashtags
-        tupla = (size_hashtags, vader_promedio, tablaCanciones[1])
-        return tupla
-    else:
-        pass
+    vader_promedio = total_vader / size_hashtags
+    tupla = (size_hashtags, vader_promedio, tablaCanciones[1])
+    return tupla
+
 
 def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
@@ -1102,9 +1104,19 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
 def filtropresort(lista):
     retorno=  lt.newList("ARRAY_LIST")
     for elemento in lt.iterator(lista):
-        if elemento['value']!=None:
+        if elemento['value'][0] != None:
             lt.addLast(retorno,elemento)
     return retorno
+
+# def filtropresort(lista):
+#     retorno = lt.newList('ARRAY_LIST')
+#     i = 1
+#     while i <= lt.size(lista):
+#         elemento = lt.getElement(lista, i)
+#         if elemento['value'][0] != None:
+#             lt.addLast(retorno, elemento)
+#     return retorno
+
 # =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
 # =================================================================
