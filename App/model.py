@@ -1233,7 +1233,7 @@ def sortByNumberOfReproductions(lista):
     sub_list = lt.subList(lista, 0, size)
     sub_list = sub_list.copy()
     t1 = time.process_time()
-    sorted_list = qui.sort(sub_list, compareByHashtags)
+    sorted_list = mer.sort(sub_list, compareByHashtags)
     t2 = time.process_time()
     tiempo_ms = (t2-t1)*1000
     sub_list = None
