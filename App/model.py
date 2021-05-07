@@ -94,15 +94,15 @@ def newCatalog():
 
 
 def addSong(catalog, cancion):
-    addInstrumentalnessTreesToHashTable(catalog, cancion)
-    addLivenessTreesToHashTable(catalog, cancion)
-    addSpeechinessTreesToHashTable(catalog, cancion)
-    addDanceabilityTreesToHashTable(catalog, cancion)
-    addValenceTreesToHashTable(catalog, cancion)
-    addLoudnessTreesToHashTable(catalog, cancion)
-    addTempoTreesToHashTable(catalog, cancion)
-    addAcousticnessTreesToHashTable(catalog, cancion)
-    addEnergyTreesToHashTable(catalog, cancion)
+    #addInstrumentalnessTreesToHashTable(catalog, cancion)
+    #addLivenessTreesToHashTable(catalog, cancion)
+    #addSpeechinessTreesToHashTable(catalog, cancion)
+    #addDanceabilityTreesToHashTable(catalog, cancion)
+    #addValenceTreesToHashTable(catalog, cancion)
+    #addLoudnessTreesToHashTable(catalog, cancion)
+    #addTempoTreesToHashTable(catalog, cancion)
+    #addAcousticnessTreesToHashTable(catalog, cancion)
+    #addEnergyTreesToHashTable(catalog, cancion)
     lista = findGenre(catalog, cancion)
     addDateTree(catalog,cancion, lista)
     addToGenre(catalog, lista, cancion)
@@ -201,11 +201,15 @@ def llenado(tablaGen, lista, cancion):
             gen = me.getValue(entry)
             esta_cancion = mp.contains(gen['canciones'], cancion['track_id'])
             if esta_cancion == False:
-                mp.put(gen['canciones'], cancion["track_id"], lista_hashtags)
                 lt.addLast(lista_hashtags, cancion["hashtag"])
-            else:
                 mp.put(gen['canciones'], cancion["track_id"], lista_hashtags)
-                lt.addLast(lista_hashtags, cancion["hashtag"]) 
+            else:
+                pareja=mp.get(gen['canciones'],cancion["track_id"])
+                value= me.getValue(pareja)
+                esta= lt.isPresent(value, cancion["hashtag"])
+                if esta==0:
+                    lt.addLast(value, cancion["hashtag"])
+                    mp.put(gen['canciones'], cancion["track_id"], value)                
     return tablaGen
 
 # ================
@@ -248,7 +252,7 @@ def newGenEntry(cancion):
 
 def addGenre2(dataentry, lista, cancion):
     generos = dataentry['generos']
-
+    lista1=lt.newList('ARRAY_LIST')
     for llave in lista:
         existeGen = mp.contains(generos, llave)
         if existeGen:
@@ -259,7 +263,7 @@ def addGenre2(dataentry, lista, cancion):
             gen = newGen2(llave)
             mp.put(generos, llave, gen)
                 
-        mp.put(gen['canciones'], cancion["track_id"], None)
+        mp.put(gen['canciones'], cancion["track_id"], lista1)
     
 # ================================
 # Creación de árboles principales
@@ -1000,7 +1004,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     cancionesUnicas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
-    lista_hashtags = lt.newList('ARRAY_LIST')
+    #lista_hashtags = lt.newList('ARRAY_LIST')
     i = 1
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
@@ -1016,9 +1020,12 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                 pareja = mp.get(tablaCanciones, elemento)
                 llave = me.getKey(pareja)
                 valor = me.getValue(pareja)
+                lista_hashtags = valor
                 esta = mp.contains(cancionesUnicas, llave)
                 if esta == False:
-                    mp.put(cancionesUnicas, llave, valor)
+                    print(llave)
+                    print(lista_hashtags)
+                    mp.put(cancionesUnicas, llave, lista_hashtags)
                     # k = 1
                     # while k <= lt.size(valor):
                     #     elemento = lt.getElement(valor, k)
@@ -1028,16 +1035,18 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                 else:
                     pareja = mp.get(cancionesUnicas, llave)
                     valor2 = me.getValue(pareja)
+                    print(valor2)
                     k = 1
                     if valor !=None:
                         while k <= lt.size(valor):
                             elemento = lt.getElement(valor, k)
-                            esta = lt.isPresent(valor, elemento)
+                            esta = lt.isPresent(valor2, elemento)
                             if esta == 0:
                                 lt.addLast(valor2, elemento)
+                                print(valor2)
                         #crearPequeñaLista(valor, valor2)
                         #mp.put(cancionesUnicas, llave, valor2)
-                        k += 1
+                            k += 1
                 j += 1
         i += 1
 
@@ -1051,13 +1060,13 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
     valor = me.getValue(pareja)
     if valor != None:
         size_hashtags = lt.size(valor)
-  
+        mapaht= mp.newMap(50, maptype='PROBING', loadfactor=0.5, comparefunction=compareGenre )
         tablaHashtags = catalog['info_VADER']
-  
         total_vader = 0
         i = 1
         while i <= size_hashtags:
             elemento = lt.getElement(valor, i)
+            mp.put(mapaht,elemento,None)
             esta = mp.contains(tablaHashtags, elemento)
             if esta == True:
                 pareja = mp.get(tablaHashtags, elemento)
@@ -1065,10 +1074,12 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
                 vader_avg = float(vader_avg)
                 total_vader += vader_avg
             i += 1
-  
-        vader_promedio = total_vader / size_hashtags
-        tupla = (size_hashtags, vader_promedio, tablaCanciones[1])
-        return tupla
+        if size_hashtags!=0:
+            keyset=mp.keySet(mapaht)
+            tamanoret= lt.size(keyset)
+            vader_promedio = total_vader / size_hashtags
+            tupla = (tamanoret, vader_promedio, tablaCanciones[1])
+            return tupla
     else:
         pass
 
