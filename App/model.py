@@ -1021,8 +1021,6 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                 lista_hashtags = valor
                 esta = mp.contains(cancionesUnicas, llave)
                 if esta == False:
-                    print(llave)
-                    print(lista_hashtags)
                     mp.put(cancionesUnicas, llave, lista_hashtags)
                     # k = 1
                     # while k <= lt.size(valor):
