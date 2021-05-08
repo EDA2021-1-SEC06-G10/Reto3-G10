@@ -67,20 +67,20 @@ def loadContent(catalog):
     contentfile = cf.data_dir + 'context_content_features-small.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cancion in input_file:
-        adaptado= {}
-        adaptado["instrumentalness"]= float(cancion["instrumentalness"]) 
-        adaptado["liveness"]= float(cancion["liveness"])
-        adaptado["speechiness"]= float(cancion["speechiness"])
-        adaptado["danceability"]= float(cancion["danceability"])
-        adaptado["valence"]= float(cancion["valence"])        
-        adaptado["loudness"]= float(cancion["loudness"])
-        adaptado["tempo"]= float(cancion["tempo"])
-        adaptado["acousticness"]= float(cancion["acousticness"])
-        adaptado["energy"]= float(cancion["energy"])
-        adaptado["artist_id"]= cancion["artist_id"]
+        adaptado = {}
+        adaptado["instrumentalness"] = float(cancion["instrumentalness"]) 
+        adaptado["liveness"] = float(cancion["liveness"])
+        adaptado["speechiness"] = float(cancion["speechiness"])
+        adaptado["danceability"] = float(cancion["danceability"])
+        adaptado["valence"] = float(cancion["valence"])        
+        adaptado["loudness"] = float(cancion["loudness"])
+        adaptado["tempo"] = float(cancion["tempo"])
+        adaptado["acousticness"] = float(cancion["acousticness"])
+        adaptado["energy"] = float(cancion["energy"])
+        adaptado["artist_id"] = cancion["artist_id"]
         adaptado["track_id"] = cancion["track_id"]
         date_string = cancion["created_at"][11:]
-        date_string1= model.horamilitar(date_string)
+        date_string1 = model.horamilitar(date_string)
         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
         model.addSong(catalog, adaptado)
        
@@ -88,30 +88,36 @@ def loadHashtagToSong(catalog):
      contentfile = cf.data_dir + 'user_track_hashtag_timestamp-small.csv'
      input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
      for cancion in input_file:
-         adaptado={}
+         adaptado = {}
          date_string = cancion["created_at"][11:]
-         date_string1= model.horamilitar(date_string)
-         adaptado["created_at"] =  datetime.strptime(date_string1, "%H:%M:%S")
-         adaptado["track_id"]= cancion["track_id"]
-         adaptado['hashtag']= cancion['hashtag'].lower()
+         date_string1 = model.horamilitar(date_string)
+         adaptado["created_at"] = datetime.strptime(date_string1, "%H:%M:%S")
+         adaptado["track_id"] = cancion["track_id"]
+         adaptado['hashtag'] = cancion['hashtag'].lower()
          model.addHT(catalog, adaptado)
 
 def loadHashtagdata(catalog):
-     contentfile= cf.data_dir + 'sentiment_values.csv'
+     contentfile = cf.data_dir + 'sentiment_values.csv'
      input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
      for hashtag in input_file:
-         filtro={}
+         filtro = {}
          if hashtag["vader_avg"] != "":
-             filtro["hashtag"]= hashtag['hashtag']
-             filtro["vader_avg"]= float(hashtag["vader_avg"])
+             filtro["hashtag"] = hashtag['hashtag']
+             filtro["vader_avg"] = float(hashtag["vader_avg"])
              model.addVader(catalog, hashtag)
 
 # Funciones de ordenamiento
 
 def sortByHashTags(lista):
+    """
+    Llama a la función sortByHashTags() del model.
+    """
     return model.sortByHashTags(lista)
 
 def sortByNumberOfReproductions(lista):
+    """
+    Llama a la función sortByNumberOfReproductions() del model.
+    """
     return model.sortByNumberOfReproductions(lista)
 
 # Funciones de consulta sobre el catálogo
@@ -123,6 +129,10 @@ def indexHeightInstrumentalness(catalog):
     return model.indexHeightInstrumentalness(catalog)
 
 def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
+    """
+    Llama a la función consultaArtistas() del model e imprime su tiempo [ms]
+    y la memoria usada [kB].
+    """
     artistas = None
     delta_time = -1.0
     delta_memory = -1.0
@@ -152,9 +162,16 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     return (artistas)
 
 def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
+    """
+    Llama a la función consultaCanciones() del model.
+    """
     return model.consultaCanciones(catalog, categoria, rango_menor, rango_mayor)
 
 def consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
+    """
+    Llama a la función consultaReq2() del model e imprime su tiempo [ms]
+    y la memoria usada [kB].
+    """
     consulta = None
     delta_time = -1.0
     delta_memory = -1.0
@@ -184,6 +201,10 @@ def consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, 
     return (consulta)
 
 def consultaReq4(catalog, genero):
+    """
+    Llama a la función consultaReq4 del model e imprime su tiempo [ms]
+    y la memoria usada [kB].
+    """
     consulta = None
     delta_time = -1.0
     delta_memory = -1.0
@@ -213,12 +234,22 @@ def consultaReq4(catalog, genero):
     return (consulta)
 
 def reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor):
+    """
+    Llama a la función reproduccionesTotalesEnRangoDeHoras() del model.
+    """    
     return model.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
 
 def consultaGenero(catalog, rango_menor, rango_mayor):
+    """
+    Llama a la función consultaGenero() del model.
+    """
     return model.consultaGenero(catalog, rango_menor, rango_mayor)
 
 def consultaTopGeneros(catalog, rango_menor, rango_mayor):
+    """
+    Llama a la función consultaTopGeneros() del model e imprime su tiempo [ms]
+    y la memoria usada [kB].
+    """
     consulta = None
     delta_time = -1.0
     delta_memory = -1.0
@@ -247,13 +278,11 @@ def consultaTopGeneros(catalog, rango_menor, rango_mayor):
 
     return (consulta)
 
-def crearListaGeneros(catalog, rango_menor, rango_mayor):
-    return model.crearListaGeneros(catalog, rango_menor, rango_mayor)
-    
-def filtropresort(lista):
-    return model.filtropresort(lista)
-
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
+    """
+    Llama a la función topCancionesPorGenero() del model e imprime su tiempo [ms]
+    y la memoria usada [kB].
+    """
     consulta = None
     delta_time = -1.0
     delta_memory = -1.0

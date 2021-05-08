@@ -110,7 +110,11 @@ def addSong(catalog, cancion):
     return catalog
 
 def addHT(catalog, cancion):
-   
+    """ 
+    Crea una lista con todos los géneros y llama a la
+    función addHTinfo(). Luego que se ejecute la función,
+    esta lista se 'limpia' (se vuelve None).
+    """
     lista = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
     addHTinfo(catalog, lista, cancion)
     lista.clear()
@@ -120,6 +124,10 @@ def addHT(catalog, cancion):
 # =================
 
 def findGenre(catalog, cancion):
+    """
+    Agrega elementos a una lista dependiendo de su valor
+    de tempo.
+    """
     lista=[]
     if (cancion["tempo"]>= 60) and (cancion['tempo']<= 90):
         lista.append("reggae")
@@ -156,14 +164,14 @@ def addToGenre(catalog, lista, cancion):
                 mp.put(generos, llave, gen)
             
             mp.put(gen['artistas'], cancion["artist_id"],None)
-            gen['reproducciones']+=1
+            gen['reproducciones'] += 1
     except Exception:
         return None
 
 
 def newGen(genero):
-    entry= {'artistas': None, "reproducciones":0}
-    entry['artistas']= mp.newMap(3000,
+    entry = {'artistas': None, "reproducciones":0}
+    entry['artistas'] = mp.newMap(3000,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
                                   comparefunction=compareArtistid)
@@ -171,8 +179,8 @@ def newGen(genero):
 
 def newGen2(genero):
 
-    entry= {'canciones': None, "reproducciones": 1}
-    entry['canciones']= mp.newMap(3000,
+    entry = {'canciones': None, "reproducciones": 1}
+    entry['canciones'] = mp.newMap(3000,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
                                   comparefunction=compareArtistid)
@@ -183,10 +191,10 @@ def newGen2(genero):
 # ================
 
 def addHTinfo(catalog, lista, cancion):
-    arbol= catalog['date_RBT']
-    fecha= cancion["created_at"]
-    entry= om.get(arbol, fecha)
-    tabla_Gen=me.getValue(entry)
+    arbol = catalog['date_RBT']
+    fecha = cancion["created_at"]
+    entry = om.get(arbol, fecha)
+    tabla_Gen = me.getValue(entry)
     llenado(tabla_Gen['generos'], lista, cancion)
     return arbol
 
@@ -202,10 +210,10 @@ def llenado(tablaGen, lista, cancion):
                 lt.addLast(lista_hashtags, cancion["hashtag"])
                 mp.put(gen['canciones'], cancion["track_id"], lista_hashtags)
             else:
-                pareja=mp.get(gen['canciones'],cancion["track_id"])
-                value= me.getValue(pareja)
-                esta= lt.isPresent(value, cancion["hashtag"])
-                if esta==0:
+                pareja = mp.get(gen['canciones'],cancion["track_id"])
+                value = me.getValue(pareja)
+                esta = lt.isPresent(value, cancion["hashtag"])
+                if esta == 0:
                     lt.addLast(value, cancion["hashtag"])
                     mp.put(gen['canciones'], cancion["track_id"], value)                
     return tablaGen
@@ -217,10 +225,9 @@ def llenado(tablaGen, lista, cancion):
 def addVader(catalog, hashtag):
     hashtags = catalog["info_VADER"]
     llave = hashtag['hashtag']
-    existeHT =  mp.contains(hashtags, llave)
-    if existeHT== False:
+    existeHT = mp.contains(hashtags, llave)
+    if existeHT == False:
         mp.put(hashtags, llave, hashtag["vader_avg"])
-
 
 # ========================
 # Organizacion por fechas
@@ -228,21 +235,21 @@ def addVader(catalog, hashtag):
 
 def addDateTree(catalog, cancion, lista):
     fecha = cancion["created_at"]
-    arbol= catalog['date_RBT']
-    entry= om.get(arbol, fecha)
+    arbol = catalog['date_RBT']
+    entry = om.get(arbol, fecha)
     if entry is None:
-        dataentry=newGenEntry(cancion)
+        dataentry = newGenEntry(cancion)
         om.put(arbol, fecha, dataentry)
         
     else:
-        dataentry=me.getValue(entry)
+        dataentry = me.getValue(entry)
     dataentry["fechaRepr"] += 1
     addGenre2(dataentry, lista, cancion)    
     return arbol
 
 def newGenEntry(cancion):
-    generosFecha={"fechaRepr": 0, "generos": None}
-    generosFecha['generos']= mp.newMap(9,
+    generosFecha = {"fechaRepr": 0, "generos": None}
+    generosFecha['generos'] = mp.newMap(9,
                                   maptype='PROBING',
                                   loadfactor=0.5,
                                   comparefunction=compareGenre)
@@ -250,7 +257,7 @@ def newGenEntry(cancion):
 
 def addGenre2(dataentry, lista, cancion):
     generos = dataentry['generos']
-    lista1=lt.newList('ARRAY_LIST')
+    lista1 = lt.newList('ARRAY_LIST')
     for llave in lista:
         existeGen = mp.contains(generos, llave)
         if existeGen:
@@ -280,19 +287,14 @@ def addInstrumentalnessTreesToHashTable(catalog, cancion):
         mp.put(tabla, categoria, arbol)
     addSongToTreeInstrumentalness(arbol, cancion)
 
-    #print(arbol)
     return tabla
 
 def addSongToTreeInstrumentalness(mapt, cancion):
     caracteristica = 'instrumentalness'
     categoria = cancion["instrumentalness"]
     entry = om.get(mapt, categoria)
-    #print(entry)
-    filtrado = {} # Elina, Nicolás, 
-                  # por favor no nos bajen.
-                  # Carlos nos autorizó usar
-                  # este diccionaro.
-
+    
+    filtrado = {} 
     filtrado["track_id"] = cancion["track_id"]
     filtrado["instrumentalness"] = cancion["instrumentalness"]
     filtrado["tempo"] = cancion["tempo"]
@@ -300,43 +302,15 @@ def addSongToTreeInstrumentalness(mapt, cancion):
     filtrado["energy"] = cancion["energy"]
 
     if entry is None:
+        
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
-
-        # artistas_par = mp.get(dataentry, 'artistas')
-        # artistas = me.getValue(artistas_par)
-        # lt.addLast(artistas, cancion['artist_id'])
-
-        # canciones_par = mp.get(dataentry, 'canciones')
-        # canciones = me.getValue(canciones_par)
-        # lt.addLast(canciones, cancion['track_id'])
-
-        # reproducciones_par = mp.get(dataentry, 'reproducciones')
-        # reproducciones = me.getValue(reproducciones_par)
-        # lt.addLast(reproducciones, cancion['track_id'])
 
         lt.addLast(dataentry['canciones'], filtrado)
         lt.addLast(dataentry['artistas'], cancion["artist_id"])
         lt.addLast(dataentry["reproducciones"], cancion["track_id"])
        
     else:
-        # dataentry = me.getValue(entry)
- 
-        # canciones_par = mp.get(dataentry, 'canciones')
-        # canciones = me.getValue(canciones_par)
-        # esta_track = lt.isPresent(canciones, filtrado['track_id'])
-        # if esta_track == 0:
-        #     lt.addLast(canciones, filtrado)
-
-        # artistas_par = mp.get(dataentry, 'artistas')
-        # artistas = me.getValue(artistas_par)
-        # esta_artista = lt.isPresent(artistas, cancion['artist_id'])
-        # if esta_artista == 0:
-        #     lt.addLast(artistas, cancion["artist_id"])
-        
-        # reproducciones_par = mp.get(dataentry, 'reproducciones')
-        # reproducciones = me.getValue(reproducciones_par)
-        # lt.addLast(reproducciones, cancion["track_id"])
 
         dataentry = me.getValue(entry)
         esta_track = lt.isPresent(dataentry['canciones'], filtrado['track_id'])
@@ -368,12 +342,12 @@ def addSongToTreeLiveness(mapt, cancion):
     caracteristica = 'liveness'
     categoria = cancion["liveness"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -397,7 +371,7 @@ def addSongToTreeLiveness(mapt, cancion):
 # ============
 
 def addSpeechinessTreesToHashTable(catalog, cancion):
-    categoria = 'ispeechiness'
+    categoria = 'speechiness'
     tabla = catalog['caracteristicas']
     arbol = catalog['speechiness_RBT']
     entry = mp.get(tabla, categoria)
@@ -411,12 +385,12 @@ def addSongToTreeSpeechiness(mapt, cancion):
     caracteristica = 'speechiness'
     categoria = cancion["speechiness"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -454,12 +428,12 @@ def addSongToTreeDanceability(mapt, cancion):
     caracteristica = 'danceability'
     categoria = cancion["danceability"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -497,12 +471,12 @@ def addSongToTreeValence(mapt, cancion):
     caracteristica = 'valence'
     categoria = cancion["valence"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -540,12 +514,12 @@ def addSongToTreeLoudness(mapt, cancion):
     caracteristica = 'loudness'
     categoria = cancion["loudness"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -583,10 +557,7 @@ def addSongToTreeTempo(mapt, cancion):
     caracteristica = 'tempo'
     categoria = cancion["tempo"]
     entry = om.get(mapt, categoria)
-    filtrado = {} # Elina, Nicolás, 
-                # por favor no nos bajen.
-                # Carlos nos autorizó usar
-                # este diccionaro.
+    filtrado = {} 
     filtrado["track_id"] = cancion["track_id"]
     filtrado["instrumentalness"] = cancion["instrumentalness"]
     filtrado["tempo"] = cancion["tempo"]
@@ -629,12 +600,12 @@ def addSongToTreeAcousticness(mapt, cancion):
     caracteristica = 'acousticness'
     categoria = cancion["acousticness"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -672,12 +643,12 @@ def addSongToTreeEnergy(mapt, cancion):
     caracteristica = 'energy'
     categoria = cancion["energy"]
     entry = om.get(mapt, categoria)
-    filtrado={}
-    filtrado["track_id"]=cancion["track_id"]
-    filtrado["instrumentalness"]= cancion["instrumentalness"]
-    filtrado["tempo"]= cancion["tempo"]
-    filtrado["danceability"]= cancion["danceability"]
-    filtrado["energy"]= cancion["energy"]
+    filtrado = {}
+    filtrado["track_id"] = cancion["track_id"]
+    filtrado["instrumentalness"] = cancion["instrumentalness"]
+    filtrado["tempo"] = cancion["tempo"]
+    filtrado["danceability"] = cancion["danceability"]
+    filtrado["energy"] = cancion["energy"]
     if entry is None:
         dataentry = newArtEntry(caracteristica, filtrado)
         om.put(mapt, categoria, dataentry)
@@ -709,22 +680,13 @@ def newArtEntry(caracteristica, cancion):
     artentry["reproducciones"]= lt.newList('ARRAY_LIST')
     return artentry
 
-    # artentry = mp.newMap(8, maptype='PROBING', loadfactor=0.5) #, comparefunction=compareArtistas)
-
-    # lista_artistas = lt.newList('ARRAY_LIST', compareArtistas)
-    # lista_canciones = lt.newList('ARRAY_LIST', compareCanciones)
-    # lista_reproducciones = lt.newList('ARRAY_LIST')
-
-    # mp.put(artentry, 'caracteristica', caracteristica)
-    # mp.put(artentry, 'artistas', lista_artistas)
-    # mp.put(artentry, 'canciones', lista_canciones)
-    # mp.put(artentry, 'reproducciones', lista_reproducciones)
-
-    return artentry
-
 # ======================
 # Funciones de consulta
 # ======================
+
+    # =============================
+    # Sólo para 'Instrumentalness'
+    # =============================
 
 def indexHeightInstrumentalness(catalog):
     return om.height(catalog['instrumentalness_RBT'])
@@ -737,6 +699,23 @@ def indexSizeInstrumentalness(catalog):
     # ==================================
 
 def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
+    """
+    Crea un mapa con todos los artistas únicos. También, cuenta cuántas
+    reproducciones y cuántos artistas únicos tiene un género en un
+    rango de valores específico.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        categoría = la categoría ingresada por el usuario.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+    
+    Retorna:
+        una tupla, donde [0] es el total de reproducciones, 
+        [1] es el total de artistas únicos y [2] es el mapa
+        donde cada llave es el 'id' de cada artista y su
+        valor es None.
+    """
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
@@ -752,11 +731,6 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     while i <= tamaño_tabla:
         tabla = lt.getElement(valores, i)
 
-        # artistas_par = mp.get(tabla, 'artistas')
-        # lista_artistas = me.getValue(artistas_par)
-
-        # reproducciones_par = mp.get(tabla, 'reproducciones')
-        # lista_reproducciones = me.getValue(reproducciones_par)
         lista_reproducciones = tabla['reproducciones']
         lista_artistas = tabla['artistas']
         size_lista_artistas = lt.size(lista_artistas)
@@ -782,6 +756,20 @@ def consultaArtistas(catalog, categoria, rango_menor, rango_mayor):
     # ========================================
 
 def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
+    """
+    Calcula el total de reproducciones que tuvo un género y el total de
+    canciones únicas en el rango ingresado por el usuario.
+    
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        categoría = la categoría ingresada por el usuario.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+    
+    Retorna:
+        una tupla, donde [0] es el total de reproducciones y
+        [1] es una lista con todas las canciones únicas.
+    """
     total_tamaño = 0
     hashTabla = catalog['caracteristicas']
     llaves = mp.get(hashTabla, categoria)
@@ -814,7 +802,25 @@ def consultaCanciones(catalog, categoria, rango_menor, rango_mayor):
     return (total_reproducciones, total_canciones)
 
 def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2):
+    """
+    Llama a la función consultaCanciones() dos veces, una para cada género. 
+    Recorre cada la lista que devuelve la función para ambos géneros y cada
+    elemento lo agrega a una lista aparte, comparando para que queden solo
+    las canciones únicas.
 
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        categoría1 = la primera categoría ingresada por el usuario.
+        categoría2 = la segunda categoría ingresada por el usuario.
+        rango_menor1 = el primer valor menor del rango de interés.
+        rango_mayor1 = el primer valor mayor del rango de interés.
+        rango_menor2 = el segundo valor menor del rango de interés.
+        rango_mayor2 = el segundo valor mayor del rango de interés.
+    
+    Retorna:
+        una tupla, donde [0] es el total de canciones únicas y [1]
+        es la lista de las canciones únicas.
+    """
     lista_canciones_unicas = lt.newList('ARRAY_LIST', cmpfunction=compareTracksLista)
 
     tupla_1 = consultaCanciones(catalog, categoria1, rango_menor1, rango_mayor1)
@@ -845,7 +851,6 @@ def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, ra
 
         j += 1
     
-    #print(lista_canciones_unicas)
     size = lt.size(lista_canciones_unicas)
 
     return (size, lista_canciones_unicas)
@@ -855,34 +860,57 @@ def consultaReq2(catalog, categoria1, categoria2, rango_menor1, rango_mayor1, ra
     # ===================================
 
 def consultaReq4(catalog, genero):
+    """
+    Consulta la cantidad de artistas únicos, los artistas únicos, el
+    total de reproducciones y el rango de Tempo para un género ingresado.
+
+    Parámetro:
+        catalog: el catálogo donde está guardado todo.
+        genero: el género de interés.
+    
+    Retorna:
+        una tupla, donde [0] es la cantidad de artistas, [1] es el total
+        de reproducciones, [2] son los artistas únicos y [3] es el rango
+        de Tempo.
+    """
     key_value = mp.get(catalog['generos'], genero)
     value = me.getValue(key_value)
     artistas = mp.keySet(value["artistas"])
-    cantArt= lt.size(artistas)
-    reproducciones= value["reproducciones"]
-    rango= Rangos(genero)
-    return cantArt, reproducciones, artistas, rango
+    cantArt = lt.size(artistas)
+    reproducciones = value["reproducciones"]
+    rango = Rangos(genero)
+    return (cantArt, reproducciones, artistas, rango)
 
 def Rangos(genero):
-    rango= 0
-    if genero== "reggae":
-        rango=(60,90)
-    elif genero== "down-tempo":
-        rango=(70,100)
-    elif genero== "chill-out":
-            rango=(90,120)
-    elif genero== "hip-hop":
-            rango=(85,115)
-    elif genero== "jazz and funk":
-            rango=(120, 125)
-    elif genero== "pop":
-            rango=(100, 130)
-    elif genero== "r&b":
-        rango=(60, 80)
-    elif genero== "rock":
-        rango=(110, 140)
+    """
+    Se aclara el Tempo de cada género.
+
+    Parámetro:
+        genero: el género de interés.
+    
+    Retorno:
+        un entero, que es el rango de Tempo dependiendo del género
+        de interés.
+    """
+    rango = 0
+    if genero == "reggae":
+        rango = (60,90)
+    elif genero == "down-tempo":
+        rango = (70,100)
+    elif genero == "chill-out":
+            rango = (90,120)
+    elif genero == "hip-hop":
+            rango = (85,115)
+    elif genero == "jazz and funk":
+            rango = (120, 125)
+    elif genero == "pop":
+            rango = (100, 130)
+    elif genero == "r&b":
+        rango = (60, 80)
+    elif genero == "rock":
+        rango = (110, 140)
     elif genero == "metal":
-        rango=(100, 160)
+        rango = (100, 160)
     return rango
 
     # ==================================
@@ -894,6 +922,18 @@ def Rangos(genero):
         # ========
 
 def reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor):
+    """
+    Calcula las reproducciones totales en un rango de horas.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+    
+    Retorna:
+        un entero, que es el total de reproducciones de un
+        género en el rango de horas de interés.
+    """
     total_tamaño = 0
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
@@ -908,27 +948,21 @@ def reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor):
         i += 1
     
     return total_reproducciones
-
-def crearListaGeneros(catalog, keyset, rango_menor, rango_mayor):
-    total_tamaño = 0
-    arbol = catalog['date_RBT']
-    valores = om.values(arbol, rango_menor, rango_mayor)
-    tamaño_tabla = lt.size(valores)
-    total_reproducciones = 0
-    lista_generos = lt.newList('ARRAY_LIST')
-    size_generos = lt.size(keyset)
-    j = 1
-    while j <= size_generos:
-        elemento = lt.getElement(keyset, j)
-        esta_genero = lt.isPresent(lista_generos, elemento)
-        if esta_genero == 0:
-            lt.addLast(lista_generos, elemento)
-        j += 1
-        
-    return lista_generos
-    
+   
 def consultaGenero(catalog, rango_menor, rango_mayor):
+    """
+    Llena un mapa con cada género y su total de
+    reproducciones.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
     
+    Retorna:
+        una tabla de Hash, donde cada llave es un género y
+        su valor es el total de reproducciones.
+    """
     total_tamaño = 0
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
@@ -947,10 +981,10 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
             if elemento != None:
                 valor = me.getValue(elemento)
                 reproducciones = valor['reproducciones']
-                genero2=mp.get(generos,genero)
-                value= me.getValue(genero2)
-                value+=reproducciones
-                mp.put(generos,genero, value)
+                genero2 = mp.get(generos, genero)
+                value = me.getValue(genero2)
+                value += reproducciones
+                mp.put(generos, genero, value)
 
             j += 1
         
@@ -959,18 +993,39 @@ def consultaGenero(catalog, rango_menor, rango_mayor):
     return generos
 
 def mapaTempGen():
+    """
+    Crea el mapa que se llena en consultaGenero().
+    
+    Retorna:
+        una tabla de Hash, donde cada llave es un género y
+        su valor es 0 (luego este 0 aumenta cuando se llena
+        en 'consultaGenero()').
+    """
     lista = ['reggae','down-tempo',"chill-out","hip-hop","jazz and funk", "pop", "r&b", "rock", "metal"]
-    i=0
-    size= len(lista)
-    mapa= mp.newMap(9, maptype='PROBING', loadfactor=0.5)
+    i = 0
+    size = len(lista)
+    mapa = mp.newMap(9, maptype='PROBING', loadfactor=0.5)
 
     while i < size:
-        llave=lista[i]
+        llave = lista[i]
         mp.put(mapa,llave, 0)
-        i+=1
+        i += 1
     return mapa
 
 def consultaTopGeneros(catalog, rango_menor, rango_mayor):
+    """
+    Recorre el mapa que se llena en consultaGenero(), se extrae cada
+    pareja llave - valor y cada una se mete en una lista.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+    
+    Retorna:
+        una lista de tipo 'array', donde cada elemento es una pareja
+        de la tabla de Hash que retorna consultaGenero().
+    """
     generos = consultaGenero(catalog, rango_menor, rango_mayor)
     lista = lt.newList('ARRAY_LIST')
     llaves = mp.keySet(generos)
@@ -988,21 +1043,26 @@ def consultaTopGeneros(catalog, rango_menor, rango_mayor):
         # Parte 2
         # ========
 
-def crearPequeñaLista(lista_vieja, lista_nueva):
-    size = lt.size(lista_vieja)
-    i = 1
-    while i <= size:
-        elemento = lt.getElement(lista_vieja, i)
-        lt.addLast(lista_nueva, elemento)
-        i += 1
-    return lista_nueva
-
 def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
+    """
+    Crea un mapa, donde cada llave es el id de cada canción y los valores
+    son una lista con hashtags asociados a esa canción.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+        genero = el genero ingresado por el usuario.
+    
+    Retorna:
+        una tupla, donde [0] es una tabla de Hash, donde cada llave es el id
+        de cada canción y el valor es una lista con los hashtags asociados
+        a esa canción, y donde [1] es el total de canciones únicas de ese género. 
+    """
     arbol = catalog['date_RBT']
     valores = om.values(arbol, rango_menor, rango_mayor)
     tamaño_tabla = lt.size(valores)
     cancionesUnicas = mp.newMap(3000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtistid)
-    #lista_hashtags = lt.newList('ARRAY_LIST')
     i = 1
     while i <= tamaño_tabla:
         diccionario = lt.getElement(valores, i)
@@ -1022,12 +1082,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                 esta = mp.contains(cancionesUnicas, llave)
                 if esta == False:
                     mp.put(cancionesUnicas, llave, lista_hashtags)
-                    # k = 1
-                    # while k <= lt.size(valor):
-                    #     elemento = lt.getElement(valor, k)
-                    #     lt.addLast(lista_hashtags, elemento)
-                    #     #crearPequeñaLista(valor, lista_hashtags)
-                    #     mp.put(cancionesUnicas, llave, lista_hashtags)
+
                 else:
                     pareja = mp.get(cancionesUnicas, llave)
                     valor2 = me.getValue(pareja)
@@ -1038,8 +1093,7 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
                             esta = lt.isPresent(valor2, elemento)
                             if esta == 0:
                                 lt.addLast(valor2, elemento)
-                        #crearPequeñaLista(valor, valor2)
-                        #mp.put(cancionesUnicas, llave, valor2)
+
                             k += 1
                 j += 1
         i += 1
@@ -1049,12 +1103,28 @@ def crearMapaTracks(catalog, rango_menor, rango_mayor, genero):
     return (cancionesUnicas, total_canciones_unicas)
 
 def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor, genero):
+    """
+    Crea una tupla para UNA canción, donde [0] es el
+    total de hashtags, [1] es el vader promedio y [2]
+    es el total de canciones únicas.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        cancion_id = el id de la canción específica.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+        genero = el genero ingresado por el usuario.
+    
+    Retorna:
+        una tupla, donde [0] es el total de hashtags, [1] es el
+        vader promedio y [2] es el total de canciones únicas.
+    """
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     pareja = mp.get(tablaCanciones[0], cancion_id)
     valor = me.getValue(pareja)
     if valor != None:
         size_hashtags = lt.size(valor)
-        mapaht= mp.newMap(50, maptype='PROBING', loadfactor=0.5, comparefunction=compareGenre )
+        mapaht = mp.newMap(50, maptype='PROBING', loadfactor=0.5, comparefunction=compareGenre )
         tablaHashtags = catalog['info_VADER']
         total_vader = 0
         i = 1
@@ -1068,9 +1138,10 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
                 vader_avg = float(vader_avg)
                 total_vader += vader_avg
             i += 1
-        if size_hashtags!=0:
-            keyset=mp.keySet(mapaht)
-            tamanoret= lt.size(keyset)
+
+        if size_hashtags != 0:
+            keyset = mp.keySet(mapaht)
+            tamanoret = lt.size(keyset)
             vader_promedio = total_vader / size_hashtags
             tupla = (tamanoret, vader_promedio, tablaCanciones[1])
             return tupla
@@ -1078,6 +1149,23 @@ def darthVaderPorUnaCancion(catalog, tabla, cancion_id, rango_menor, rango_mayor
         pass
 
 def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
+    """
+    Se recorre el mapa que retorna crearMapaTracks() y, por cada
+    iteración, (es decir, por cada canción) se llama a la función
+    darthVaderPorUnaCancion() y se guarda cada tupla que retorna esta
+    en una nueva tabla de Hash, donde cada llave es el id de la canción
+    y cada valor es la tupla que retorna darthVaderPorUnaCancion().
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+        genero = el genero ingresado por el usuario.
+    
+    Retorna:
+        una tabla de Hash, donde cada llave es el id de la canción
+        y cada valor es la tupla que retorna darthVaderPorUnaCancion(). 
+    """
     tablaCanciones = crearMapaTracks(catalog, rango_menor, rango_mayor, genero)
     llaves = mp.keySet(tablaCanciones[0])
     size_llaves = lt.size(llaves)
@@ -1092,6 +1180,21 @@ def vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero):
     return (nueva_hash)       
 
 def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
+    """
+    Se llama a la función vaderPromedioParaCadaCancion() y se recorre.
+    En cada iteración se extrae cada pareja llave - valor de esa tabla
+    y se agregan a una nueva lista.
+
+    Parámetros:
+        catalog = el catálogo donde está guardado todo.
+        rango_menor = el valor menor del rango de interés.
+        rango_mayor = el valor mayor del rango de interés.
+        genero = el genero ingresado por el usuario.
+
+    Retorna:
+        una lista, donde cada elemento es una pareja del mapa que
+        retorna vaderPromedioParaCadaCancion().
+    """
     tablaGeneros = vaderPromedioParaCadaCancion(catalog, rango_menor, rango_mayor, genero)
     lista = lt.newList('ARRAY_LIST')
     llaves = mp.keySet(tablaGeneros)
@@ -1104,28 +1207,14 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
         i += 1
     return (lista)
 
-# def filtropresort(lista):
-#     retorno=  lt.newList("ARRAY_LIST")
-#     for elemento in lt.iterator(lista):
-#         if elemento['value'][0] != None:
-#             lt.addLast(retorno,elemento)
-#     return retorno
-
-# def filtropresort(lista):
-#     retorno = lt.newList('ARRAY_LIST')
-#     i = 1
-#     while i <= lt.size(lista):
-#         elemento = lt.getElement(lista, i)
-#         if elemento['value'][0] != None:
-#             lt.addLast(retorno, elemento)
-#     return retorno
-
 # =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
 # =================================================================
 
 def compareArtistid(Id, entry):
     """
+    Compara un id que entra con una llave en una tabla
+    de Hash.
     """
     identry= me.getKey(entry)
     if Id == identry:
@@ -1135,11 +1224,10 @@ def compareArtistid(Id, entry):
     else:
         return -1
 
-# def compareTrackIds(musica, track_id):
-#     result = (track_id == musica['track_id'])
-#     return result
-
 def compareValues(valor1, valor2):
+    """
+    Compara dos valores.
+    """
     if valor1 > valor2:
         return 1
     elif valor1 == valor2:
@@ -1147,15 +1235,22 @@ def compareValues(valor1, valor2):
     else:
         return -1
 
-def compareArtistas(artist1, cancion):
-    if artist1 == cancion:
+def compareArtistas(artist1, artist2):
+    """
+    Compara dos artistas.
+    """
+    if artist1 == artist2:
         return 0
-    elif artist1 > cancion:
+    elif artist1 > artist2:
         return 1
     else:
         return -1
 
 def compareCanciones(cancion1, cancion):
+    """
+    Compara dos canciones: una es un string y otra
+    también pero está en un diccionario.
+    """
     if cancion1 == cancion['track_id']:
         return 0
     elif cancion1 > cancion['track_id']:
@@ -1164,6 +1259,9 @@ def compareCanciones(cancion1, cancion):
         return -1
 
 def compareTracks(track1, track2):
+    """
+    Compara dos canciones.
+    """
     if track1 == track2:
         return 0
     elif track1 > track2:
@@ -1172,6 +1270,10 @@ def compareTracks(track1, track2):
         return -1
 
 def compareTracksLista(track1, track2):
+    """
+    Compara dos canciones: una es un string y otra
+    también pero está en un diccionario.
+    """
     if track1 == track2['track_id']:
         return 0
     elif track1 > track2['track_id']:
@@ -1181,6 +1283,8 @@ def compareTracksLista(track1, track2):
 
 def compareGenre(Id, entry):
     """
+    Compara un id que entra con una llave en una tabla
+    de Hash.
     """
     identry= me.getKey(entry)
     if Id == identry:
@@ -1191,42 +1295,33 @@ def compareGenre(Id, entry):
         return -1
 
 def compareByHashtags(hash1, hash2):
+    """
+    Compara dos hashtags que están en un diccionario,
+    en una tupla.
+    """
     result = hash1['value'][0] > hash2['value'][0]
     return result
 
 def compareHashtags(hashtag1, hashtag2):
+    """
+    Compara dos hashtags que están en un diccionario.
+    """
     result = hashtag1['value'] > hashtag2['value']
     return result    
     
-# def compareArtist(artist1, artist2):
-#     """
-#     Compara dos tipos de artistas
-#     """
-#     artist = me.getKey(artist2)
-#     if (artist1 == artist):
-#         return 0
-#     elif (artist1 > artist):
-#         return 1
-#     else:
-#         return -1
-
-# def compareCanciones(cancion1, cancion2):
-#     """
-#     Compara dos tipos de canciones
-#     """
-#     cancion = me.getKey(cancion2)
-#     if (cancion1 == cancion):
-#         return 0
-#     elif (cancion1 > cancion):
-#         return 1
-#     else:
-#         return -1
-
 # ==========================
 # Funciones de ordenamiento
 # ==========================
 
 def sortByNumberOfReproductions(lista):
+    """
+    Ordena valores de mayor a menor. En este caso, ordena número
+    de hashtags con sort 'merge' según la función compareByHashtags().
+
+    Retorna:
+        una tupla, donde [0] es el tiempo [ms] que tarda y [1] es
+        la lista ordenada.
+    """
     size = lt.size(lista)
     sub_list = lt.subList(lista, 0, size)
     sub_list = sub_list.copy()
@@ -1238,6 +1333,14 @@ def sortByNumberOfReproductions(lista):
     return (tiempo_ms, sorted_list)    
 
 def sortByHashTags(lista):
+    """
+    Ordena valores de mayor a menor. En este caso, ordena strings
+    de hashtags con sort 'quick' según la función compareHashtags().
+
+    Retorna:
+        una tupla, donde [0] es el tiempo [ms] que tarda y [1] es
+        la lista ordenada.
+    """
     size = lt.size(lista)
     sub_list = lt.subList(lista, 0, size)
     sub_list = sub_list.copy()
@@ -1249,6 +1352,9 @@ def sortByHashTags(lista):
     return (tiempo_ms, sorted_list)
 
 def horamilitar(stringAM):
+    """
+    Cambia el formato de la hora de 'a.m' y 'p.m' a hora militar.
+    """
     if "AM" in stringAM:
         stringAM = stringAM[:len(stringAM)-3]
     elif "PM" in stringAM:
@@ -1263,7 +1369,3 @@ def horamilitar(stringAM):
     stringAM= stringAM[:len(stringAM)-2]
     stringAM = stringAM+"00"
     return stringAM
-
-#============================
-# INTENTO DEL 5.2
-#============================

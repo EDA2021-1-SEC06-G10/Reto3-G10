@@ -46,6 +46,10 @@ def printMenu():
     print("6- Género más escuchado en un rango de horas del día: ")
     print("0- Salir")
 
+# ==========================================
+# Sección de prints para cada requerimiento
+# ==========================================
+
 def print_Req1(tamaño, categoria, rango_menor, rango_mayor):
     if tamaño == -1:
         print('La categoría ingresada no existe en el archivo cargado.')
@@ -132,10 +136,9 @@ while True:
         answer = controller.loadData(catalog)
         print("Tiempo [ms]: ", f"{answer[0]:.3f}", "  ||  ",
               "Memoria [kB]: ", f"{answer[1]:.3f}")
-        print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
-        print('Altura del árbol: ' + str(controller.indexHeightInstrumentalness(catalog)))
+        #print('Elementos en el árbol: ' + str(controller.indexSizeInstrumentalness(catalog)))
+        #print('Altura del árbol: ' + str(controller.indexHeightInstrumentalness(catalog)))
         
-
     elif int(inputs[0]) == 2:
         categoria = input('Ingrese la categoría de la que quiere ver información: ')
         categoria = categoria.lower()
@@ -149,10 +152,6 @@ while True:
         categoria_1 = categoria1.lower()
         categoria2 = 'Danceability'
         categoria_2 = categoria2.lower()
-        # rango_menor1 = 0.6
-        # rango_mayor1 = 1
-        # rango_menor2 = 0.6
-        # rango_mayor2 = 1
         rango_menor1 = float(input('Ingrese el rango menor de Energy: '))
         rango_mayor1 = float(input('Ingrese el rango mayor de Energy: '))
         rango_menor2 = float(input('Ingrese el rango menor de Danceability: '))
@@ -166,10 +165,6 @@ while True:
         categoria_1 = categoria1.lower()
         categoria2 = 'Tempo'
         categoria_2 = categoria2.lower()
-        # rango_menor1 = 0.0
-        # rango_mayor1 = 0.3
-        # rango_menor2 = 90
-        # rango_mayor2 = 120
         rango_menor1 = float(input('Ingrese el rango menor de Instrumentalness: '))
         rango_mayor1 = float(input('Ingrese el rango mayor de Instrumentalness: '))
         rango_menor2 = float(input('Ingrese el rango menor de Tempo: '))
@@ -189,7 +184,7 @@ while True:
                 rango = (rangotemp_inf, rangotemp_sup)
                 result = controller.consultaArtistas(catalog, 'tempo', rangotemp_inf, rangotemp_sup)
                 print(result[2])
-                #print_Req4(result, 'desconocido', rango)
+        
             else:
                 generoX = input("Ingrese el genero que desea consultar: ")
                 generoX = generoX.lower()
@@ -200,21 +195,25 @@ while True:
             i += 1
         
     elif int(inputs[0]) == 6:
-        genero = ''
-        rango_menor_str = '07:15:00'
+        #genero = ''
+        #rango_menor_str = '07:15:00'
+        rango_menor_str = input('Ingrese la hora inferior que desee (formato: "HH:MM:SS"): ')
         rango_menor = datetime.strptime(rango_menor_str, "%H:%M:%S")
-        rango_mayor_str = '07:20:00'
+        #rango_mayor_str = '07:20:00'
+        rango_mayor_str = input('Ingrese la hora superior que desee (formato: "HH:MM:SS"): ')
         rango_mayor = datetime.strptime(rango_mayor_str, "%H:%M:%S")
         reproducciones = controller.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
         lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
         ordenada1 = controller.sortByHashTags(lista)
         print_Req5_1(ordenada1, reproducciones, rango_menor, rango_mayor)
-        elemento= lt.getElement(ordenada1[1], 1)
-        genero= elemento['key']
-        reprmasgrandes= elemento['value']
+        
+        elemento = lt.getElement(ordenada1[1], 1)
+        genero = elemento['key']
+        reprmasgrandes = elemento['value']
         top = controller.topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero)
         ordenada2 = controller.sortByNumberOfReproductions(top)
         print_Req5_2(ordenada2, top, genero, reprmasgrandes)
+
     else:
         sys.exit(0)
 sys.exit(0)
