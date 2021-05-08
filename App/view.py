@@ -41,7 +41,7 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- Música dependiendo de tus gustos: ")
     print("3- ¡Música para festejar! (Energy y Danceability): ")
-    print("4- Música para estudiar (Instrumentalness y Tempo): ")
+    print("4- Estudia tranquilo, estudia agradable (Instrumentalness y Tempo): ")
     print("5- Reproducciones según un género musical: ")
     print("6- Género más escuchado en un rango de horas del día: ")
     print("0- Salir")
@@ -146,6 +146,7 @@ while True:
         rango_mayor = float(input('Ingrese el rango mayor de valores que quiere ver: '))
         canciones = controller.consultaArtistas(catalog, categoria, rango_menor, rango_mayor)
         print_Req1(canciones, categoria, rango_menor, rango_mayor)
+        controller.limpieza(canciones)
 
     elif int(inputs[0]) == 3:
         categoria1 = 'Energy'
@@ -159,6 +160,7 @@ while True:
 
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
         print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        controller.limpieza(canciones)
 
     elif int(inputs[0]) == 4:
         categoria1 = 'Instrumentalness'
@@ -171,6 +173,7 @@ while True:
         rango_mayor2 = float(input('Ingrese el rango mayor de Tempo: '))
         canciones = controller.consultaReq2(catalog, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
         print_Req2y3(canciones, categoria1, categoria2, categoria_1, categoria_2, rango_menor1, rango_mayor1, rango_menor2, rango_mayor2)
+        controller.limpieza(canciones)
 
     elif int(inputs[0]) == 5:
         generos = int(input("Ingrese la cantidad de generos que desea consultar (max 3): "))
@@ -214,6 +217,10 @@ while True:
         ordenada2 = controller.sortByNumberOfReproductions(top)
         print_Req5_2(ordenada2, top, genero, reprmasgrandes)
 
+        controller.limpieza(lista)
+        controller.limpieza(ordenada1)
+        controller.limpieza(top)
+        controller.limpieza(ordenada2)
     else:
         sys.exit(0)
 sys.exit(0)

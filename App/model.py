@@ -43,7 +43,9 @@ Se define la estructura de un catálogo de videos. El catálogo tendrá dos list
 los mismos.
 """
 
+# ========================
 # Construccion de modelos
+# ========================
 
 def newCatalog():
     catalog = {'caracteristicas': None, # Tabla de Hash en la que las llaves son
@@ -89,9 +91,9 @@ def newCatalog():
     catalog['date_RBT'] =  om.newMap(omaptype='RBT', comparefunction=compareValues)
     return catalog
 
-
-# Funciones para agregar información al catalogo
-
+# ===============================================
+# Funciones para agregar información al catálogo
+# ===============================================
 
 def addSong(catalog, cancion):
     addInstrumentalnessTreesToHashTable(catalog, cancion)
@@ -1206,6 +1208,18 @@ def topCancionesPorGenero(catalog, rango_menor, rango_mayor, genero):
         lt.addLast(lista, pareja)
         i += 1
     return (lista)
+
+# =========
+# Limpieza
+#==========
+
+def limpieza(lista):
+    """
+    Convierte cualquier tipo de dato que es requerido temporalmente
+    en None.
+    """
+    lista = None
+    return lista
 
 # =================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
