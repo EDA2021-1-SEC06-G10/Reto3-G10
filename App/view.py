@@ -198,13 +198,12 @@ while True:
             i += 1
         
     elif int(inputs[0]) == 6:
-        #genero = ''
-        #rango_menor_str = '07:15:00'
         rango_menor_str = input('Ingrese la hora inferior que desee (formato: "HH:MM:SS"): ')
         rango_menor = datetime.strptime(rango_menor_str, "%H:%M:%S")
-        #rango_mayor_str = '07:20:00'
+
         rango_mayor_str = input('Ingrese la hora superior que desee (formato: "HH:MM:SS"): ')
         rango_mayor = datetime.strptime(rango_mayor_str, "%H:%M:%S")
+        
         reproducciones = controller.reproduccionesTotalesEnRangoHoras(catalog, rango_menor, rango_mayor)
         lista = controller.consultaTopGeneros(catalog, rango_menor, rango_mayor)
         ordenada1 = controller.sortByHashTags(lista)
